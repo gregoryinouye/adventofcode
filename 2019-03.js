@@ -41,15 +41,15 @@ const checkIntersect = (coord, steps) => {
   }
 };
 
-path1.reduce((acc, curr) => calcPath(acc, curr, (key, value) => map.set(key, value)), { x: 0, y: 0, steps: 0 });
+path1.reduce((acc, curr) => calcPath(acc, curr, (key, value) => map.has(key) || map.set(key, value)), { x: 0, y: 0, steps: 0 });
 path2.reduce((acc, curr) => calcPath(acc, curr, checkIntersect), { x: 0, y: 0, steps: 0 });
 
 intersect.sort(({ x: aX, y: aY }, { x: bX, y: bY }) => Math.abs(aX) + Math.abs(aY) - Math.abs(bX) - Math.abs(bY));
 
-console.log('Part 1: ', intersect[0]);
+console.log('Part 1: ', Math.abs(intersect[0].x) + Math.abs(intersect[0].y));
 // 403
 
 intersect.sort(({ steps: aSteps }, { steps: bSteps }) => aSteps - bSteps);
 
-console.log('Part 2: ', intersect[0]);
+console.log('Part 2: ', intersect[0].steps);
 // 4158
