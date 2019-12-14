@@ -46,10 +46,7 @@ function run(intcode, input) {
 
     // output value at parameter location
     if (opcode === 4) {
-      if (intcode[p1] !== 0) {
-        console.log(intcode);
-        break;
-      }
+      result.push(p1);
       ind += 2;
       continue;
     }
