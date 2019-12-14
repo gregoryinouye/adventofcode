@@ -22,38 +22,64 @@ function run(intcode, input) {
     const p1 = modes[0] === 0 && opcode !== 3 ? intcode[intcode[ind + 1]] : intcode[ind + 1];
     const p2 = modes[1] === 0 ? intcode[intcode[ind + 2]] : intcode[ind + 2];
     const p3 = modes[2] === 0 ? intcode[ind + 3] : 'error';
-    
-    // add
-    if (opcode === 1) {
-      intcode[p3] = p1 + p2;
-      ind += 4;
-      continue;
-    }
 
-    // multiply
-    if (opcode === 2) {
-      intcode[p3] = p1 * p2;
-      ind += 4;
-      continue;
-    }
-
-    // save input to parameter
-    if (opcode === 3) {
-      intcode[p1] = input;
-      ind += 2;
-      continue;
-    }
-
-    // output value at parameter location
-    if (opcode === 4) {
-      result.push(p1);
-      ind += 2;
-      continue;
+    switch (opcode) {
+      // add
+      case 1:
+        intcode[p3] = p1 + p2;
+        ind += 4;
+        continue;
+      // multiply
+      case 2:
+        intcode[p3] = p1 * p2;
+        ind += 4;
+        continue;
+      // save input
+      case 3:
+        intcode[p1] = input;
+        ind += 2;
+        continue;
+      // output value
+      case 4:
+        result.push(p1);
+        ind += 2;
+        continue;
+      // jump if true
+      case 5:
+        if (p1 !== 0) {
+          ind = p2;
+          continue;
+        }
+        ind += 3;
+        continue;
+      // jump if false
+      case 6:
+        if (p1 === 0) {
+          ind = p2;
+          continue;
+        }
+        ind += 3;
+        continue;
+      // less than
+      case 7:
+        intcode[p3] = p1 < p2 ? 1 : 0;
+        ind += 4;
+        continue;
+      // equals
+      case 8:
+        intcode[p3] = p1 === p2 ? 1 : 0;
+        ind += 4;
+        continue;
     }
   }
 
   return result;
 };
 
-const output = run(code, acUnit);
-console.log(output);
+console.log(run(code.slice(0), acUnit));
+
+// 14155342
+
+const thermal = 5;
+console.log(run(code.slice(0), thermal));
+// 8684145
