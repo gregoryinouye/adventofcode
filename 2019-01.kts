@@ -19,7 +19,8 @@ fun calcFuel(weight: Double): Double {
 
 val result: Double = input.fold(0.toDouble()) { acc, curr -> acc + calcFuel(curr) }
 
-println("Part One: ${result.toInt()}") // 3262358
+println("Part One: ${result.toInt()}")
+// 3262358
 
 val result2: Double = input.fold(0.toDouble()) { acc, moduleWeight ->
     var totalFuel = calcFuel(moduleWeight)
@@ -31,4 +32,5 @@ val result2: Double = input.fold(0.toDouble()) { acc, moduleWeight ->
     return@fold acc + totalFuel
 }
 
-println("Part Two: ${result2.toInt()}") // 4890696
+println("Part Two: ${result2.toInt()}")
+// 4890696
