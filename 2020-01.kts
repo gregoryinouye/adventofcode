@@ -29,12 +29,24 @@ for (expense in input) {
  * Part 2
  */
 
-// val sortedExpenses = input.sort().reverse()
+val sortedExpenses = input.sorted().reversed()
 
-// var i = 0
-// var j = 1
-// var k = 2
+var i = 0
+var j = 1
+var k = 2
 
-// while (sortedExpenses[i] + sortedExpenses[j] + sortedExpenses[k] != 2020) {
+fun sumsTo2020(a: Int, b: Int, c: Int): Boolean {
+    return sortedExpenses[a] + sortedExpenses[b] + sortedExpenses[c] == 2020
+}
 
-// }
+for (i in 0..sortedExpenses.size - 1) {
+    for (j in i + 1..sortedExpenses.size - 1) {
+        for (k in j + 1..sortedExpenses.size - 1) {
+            if (sumsTo2020(i, j, k)) {
+                println(sortedExpenses[i] * sortedExpenses[j] * sortedExpenses[k])
+                // 263819430
+                break
+            }
+        }
+    }
+}
