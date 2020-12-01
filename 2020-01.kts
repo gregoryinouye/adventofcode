@@ -31,18 +31,10 @@ for (expense in input) {
 
 val sortedExpenses = input.sorted().reversed()
 
-var i = 0
-var j = 1
-var k = 2
-
-fun sumsTo2020(a: Int, b: Int, c: Int): Boolean {
-    return sortedExpenses[a] + sortedExpenses[b] + sortedExpenses[c] == 2020
-}
-
 for (i in 0..sortedExpenses.size - 1) {
     for (j in i + 1..sortedExpenses.size - 1) {
         for (k in j + 1..sortedExpenses.size - 1) {
-            if (sumsTo2020(i, j, k)) {
+            if (sortedExpenses[i] + sortedExpenses[j] + sortedExpenses[k] == 2020) {
                 println(sortedExpenses[i] * sortedExpenses[j] * sortedExpenses[k])
                 // 263819430
                 break
