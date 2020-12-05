@@ -33,25 +33,24 @@ fun calculateSeat(seatString: String, start: Int, end: Int): Int {
 
 val rowAndCol = input.map { Pair(it.substring(0, 7), it.substring(7)) }
 
-var maxId = 0
 val seatIds = mutableSetOf<Int>()
 
 for ((rowString, colString) in rowAndCol) {
     val row = calculateSeat(rowString, 0, 127)
     val col = calculateSeat(colString, 0, 7)
     val seatId = calculateSeatId(row, col)
-
-    if (seatId > maxId) maxId = seatId
     seatIds.add(seatId)
 }
-println("Part One: $maxId")
+
+val maxSeatId = seatIds.maxOrNull()!!
+println("Part One: $maxSeatId")
 // 904
 
 /**
  * Part 2
  */
 
-for (i in maxId downTo 0) {
+for (i in maxSeatId downTo 0) {
     if (!seatIds.contains(i)) {
         println("Part Two: $i")
         // 669
