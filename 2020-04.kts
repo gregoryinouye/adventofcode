@@ -1,7 +1,7 @@
 #!/usr/bin/env kotlin
 
 /**
- * https://adventofcode.com/2020/day/3
+ * https://adventofcode.com/2020/day/4
  */
 
 import java.io.FileReader
