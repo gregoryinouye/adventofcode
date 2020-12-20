@@ -13,18 +13,22 @@ val timestamp = input.first().toInt()
 val ids = input[1].split(',')
     .mapNotNull { if (it == "x") null else it.toInt() }
 
-var minutes: Int = timestamp
+var minutes: Int = timestamp - 1
 var bus: Int? = null
 
-do {
+while (bus == null) {
     minutes++
 
     for (id in ids) {
-        if (minutes % id == 0) bus = id
+        if (minutes % id == 0) {
+            bus = id
+            break
+        }
     }
-} while (bus == null)
+}
 
 println("Part One: ${bus!! * (minutes - timestamp)}")
+// 115
 
 /**
  * Part 2
