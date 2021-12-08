@@ -29,8 +29,8 @@ println(count) // 488
 val input2 = readInput().map { it.split(" | ") }
 
 val sum = input2.map { (patterns, digits) ->
-    val mapping = patterns.split(' ')
-        .let { getPatternMapping(it) }
+    val mapping = patterns.split(" ")
+        .let { buildPatternMapping(it) }
 
     digits.split(" ")
         .map { mapping[it.toSet()]!! }
@@ -40,10 +40,10 @@ val sum = input2.map { (patterns, digits) ->
 
 println(sum) // 1040429
 
-fun getPatternMapping(patterns: List<String>): Map<Set<Char>, Int> {
+fun buildPatternMapping(patterns: List<String>): Map<Set<Char>, Int> {
     lateinit var oneSet: Set<Char>
     lateinit var fourSet: Set<Char>
-    val result = mutableMapOf<Set<Char>, Int>()
+    val mapping = mutableMapOf<Set<Char>, Int>()
 
     patterns.sortedBy { it.length }
         .map { it.toSet() }
@@ -64,8 +64,8 @@ fun getPatternMapping(patterns: List<String>): Map<Set<Char>, Int> {
                 }
                 7 -> 8
                 else -> throw RuntimeException("unexpected pattern: $patternSet")
-            }.also { result.put(patternSet, it) }
+            }.also { mapping.put(patternSet, it) }
         }
 
-    return result
+    return mapping
 }
