@@ -46,9 +46,9 @@ fun getPatternMapping(patterns: List<String>): Map<Set<Char>, Int> {
     val result = mutableMapOf<Set<Char>, Int>()
 
     patterns.sortedBy { it.length }
-        .forEach { pattern ->
-            val patternSet = pattern.toSet()
-            when (pattern.length) {
+        .map { it.toSet() }
+        .forEach { patternSet ->
+            when (patternSet.size) {
                 2 -> 1.also { oneSet = patternSet }
                 3 -> 7
                 4 -> 4.also { fourSet = patternSet }
@@ -63,7 +63,7 @@ fun getPatternMapping(patterns: List<String>): Map<Set<Char>, Int> {
                     else -> 0
                 }
                 7 -> 8
-                else -> throw RuntimeException("unexpected pattern: $pattern")
+                else -> throw RuntimeException("unexpected pattern: $patternSet")
             }.also { result.put(patternSet, it) }
         }
 
