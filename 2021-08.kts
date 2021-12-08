@@ -52,18 +52,18 @@ fun getPatternMapping(patterns: List<String>): Map<Set<Char>, Int> {
                 2 -> 1.also { oneSet = patternSet }
                 3 -> 7
                 4 -> 4.also { fourSet = patternSet }
-                5 -> {
-                    if ((patternSet intersect oneSet).size == 2) 3
-                    else if ((patternSet intersect fourSet).size == 2) 2
-                    else 5
+                5 -> when {
+                    (patternSet intersect oneSet).size == 2 -> 3
+                    (patternSet intersect fourSet).size == 2 -> 2
+                    else -> 5
                 }
-                6 -> {
-                    if ((patternSet intersect oneSet).size == 1) 6
-                    else if ((patternSet intersect fourSet).size == 4) 9
-                    else 0
+                6 -> when {
+                    (patternSet intersect oneSet).size == 1 -> 6
+                    (patternSet intersect fourSet).size == 4 -> 9
+                    else -> 0
                 }
                 7 -> 8
-                else -> throw RuntimeException("error")
+                else -> throw RuntimeException("unexpected pattern: $pattern")
             }.also { result.put(patternSet, it) }
         }
 
