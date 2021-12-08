@@ -38,11 +38,10 @@ input.map { (patterns, digits) ->
 fun buildPatternMapping(patterns: List<String>): Map<Set<Char>, Int> {
     lateinit var oneSet: Set<Char>
     lateinit var fourSet: Set<Char>
-    val mapping = mutableMapOf<Set<Char>, Int>()
 
-    patterns.sortedBy { it.length }
+    return patterns.sortedBy { it.length }
         .map { it.toSet() }
-        .forEach { patternSet ->
+        .associateWith { patternSet ->
             when (patternSet.size) {
                 2 -> 1.also { oneSet = patternSet }
                 3 -> 7
@@ -59,8 +58,6 @@ fun buildPatternMapping(patterns: List<String>): Map<Set<Char>, Int> {
                 }
                 7 -> 8
                 else -> throw RuntimeException("unexpected pattern: $patternSet")
-            }.also { mapping.put(patternSet, it) }
+            }
         }
-
-    return mapping
 }
