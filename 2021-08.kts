@@ -11,24 +11,19 @@ fun readInput(): List<String> {
     return FileReader("./2021-08.txt").readLines()
 }
 
-val input = readInput()
-    .map { it.split(" | ") }
-    .map { it.last() }
-    .map { it.split(" ") }
+val input = readInput().map { it.split(" | ") }
+val easyNumberLengths = setOf(2, 3, 4, 7)
 
-val easyNumberSizes = setOf(2, 3, 4, 7)
-
-val count = input.fold(0) { acc, curr -> acc + curr.filter { it.length in easyNumberSizes }.size }
-
-println(count) // 488
+input.flatMap { it.last().split(" ") }
+    .filter { it.length in easyNumberLengths }
+    .size
+    .also(::println) // 488
 
 /**
  * Part 2
  */
 
-val input2 = readInput().map { it.split(" | ") }
-
-val sum = input2.map { (patterns, digits) ->
+input.map { (patterns, digits) ->
     val mapping = patterns.split(" ")
         .let { buildPatternMapping(it) }
 
@@ -36,9 +31,9 @@ val sum = input2.map { (patterns, digits) ->
         .map { mapping[it.toSet()]!! }
         .joinToString("")
         .toInt()
-}.sum()
-
-println(sum) // 1040429
+}
+    .sum()
+    .also(::println) // 1040429
 
 fun buildPatternMapping(patterns: List<String>): Map<Set<Char>, Int> {
     lateinit var oneSet: Set<Char>
