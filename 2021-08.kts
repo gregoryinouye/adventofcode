@@ -15,8 +15,7 @@ val input = readInput().map { it.split(" | ") }
 val easyNumberLengths = setOf(2, 3, 4, 7)
 
 input.flatMap { it.last().split(" ") }
-    .filter { it.length in easyNumberLengths }
-    .size
+    .count { it.length in easyNumberLengths }
     .also(::println) // 488
 
 /**
