@@ -13,9 +13,10 @@ fun readInput(): List<String> {
 
 val input = readInput().map { it.map { Character.getNumericValue(it) } }
 
-input.mapIndexed { rowIndex, row ->
-    row.mapIndexed { columnIndex, _ -> if (isLowPoint(columnIndex, rowIndex, input)) 1 + input[rowIndex][columnIndex] else 0 }
-        .sum()
+input.flatMapIndexed { rowIndex, row ->
+    row.mapIndexed { columnIndex, _ ->
+        if (isLowPoint(columnIndex, rowIndex, input)) 1 + input[rowIndex][columnIndex] else 0
+    }
 }
     .sum()
     .also(::println) // 496
@@ -60,7 +61,7 @@ fun findBasin(column: Int, row: Int, basin: Int?, input: List<MutableList<Int>>)
         .let { basinSizes.put(currBasin, it + 1) }
 
     if (row > 0) findBasin(column, row - 1, currBasin, input)
-    if (column > 0) findBasin(column - 1, row , currBasin, input)
+    if (column > 0) findBasin(column - 1, row, currBasin, input)
     if (row + 1 < input.size) findBasin(column, row + 1, currBasin, input)
     if (column + 1 < input[0].size) findBasin(column + 1, row, currBasin, input)
 }
