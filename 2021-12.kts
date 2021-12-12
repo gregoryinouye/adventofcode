@@ -12,24 +12,23 @@ fun readInput(): List<String> {
     return FileReader("./2021-12.txt").readLines()
 }
 
-val paths = mutableMapOf<String, MutableSet<String>>()
-
-val input = readInput().map { it.split('-') }
-    .forEach { (pointA, pointB) ->
-        paths.getOrPut(pointA, { mutableSetOf() })
-            .add(pointB)
-
-        paths.getOrPut(pointB, { mutableSetOf() })
-            .add(pointA)
+val doors = readInput().map { it.split('-') }
+    .fold(mutableMapOf<String, MutableSet<String>>()) { acc, (pointA, pointB) ->
+        acc.apply {
+            getOrPut(pointA, { mutableSetOf() })
+                .add(pointB)
+            getOrPut(pointB, { mutableSetOf() })
+                .add(pointA)
+        }
     }
 
 val result = mutableListOf<String>()
 
-findPath("start", listOf("start"))
+findPath("start")
 result.count().also(::println) // 3887
 
-fun findPath(name: String, history: List<String>, canVisitSmallTwice: Boolean = false) {
-    paths.getOrDefault(name, mutableSetOf())
+fun findPath(name: String, history: List<String> = listOf(name), canVisitSmallTwice: Boolean = false) {
+    doors.get(name)!!
         .forEach {
             when {
                 it == "end" -> result.add(history.plus("end").joinToString(","))
@@ -50,5 +49,5 @@ fun isSmallCave(name: String): Boolean {
 
 result.clear()
 
-findPath("start", listOf("start"), true)
+findPath("start", canVisitSmallTwice = true)
 result.count().also(::println) // 104834
