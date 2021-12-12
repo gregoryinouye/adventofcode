@@ -16,10 +16,10 @@ val paths = mutableMapOf<String, MutableSet<String>>()
 
 val input = readInput().map { it.split('-') }
     .forEach { (pointA, pointB) ->
-        paths.getOrPut(pointA, { mutableSetOf(pointB) })
+        paths.getOrPut(pointA, { mutableSetOf() })
             .add(pointB)
 
-        paths.getOrPut(pointB, { mutableSetOf(pointA) })
+        paths.getOrPut(pointB, { mutableSetOf() })
             .add(pointA)
     }
 
