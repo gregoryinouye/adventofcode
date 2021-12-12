@@ -35,12 +35,10 @@ fun isLowPoint(column: Int, row: Int, input: List<List<Int>>): Boolean {
  */
 
 val grid = input.map { it.toMutableList() }
-
-var basinCount = 100
 val basinSizes = mutableMapOf<Int, Int>()
 
 input.forEachIndexed { rowIndex, row ->
-    row.forEachIndexed { columnIndex, _ -> findBasin(columnIndex, rowIndex, null, grid) }
+    row.forEachIndexed { columnIndex, _ -> findBasin(columnIndex, rowIndex, null) }
 }
 
 basinSizes.map { (_, size) -> size }
@@ -49,19 +47,21 @@ basinSizes.map { (_, size) -> size }
     .reduce { acc, curr -> acc * curr }
     .also(::println) // 902880
 
-fun findBasin(column: Int, row: Int, basin: Int?, input: List<MutableList<Int>>) {
-    val curr = input[row][column]
+fun findBasin(column: Int, row: Int, basin: Int?) {
+    grid.getOrNull(row)
+        ?.getOrNull(column)
+        ?.takeUnless { it == 9 }
+        ?: return
 
-    if (curr >= 9) return
+    grid[row][column] = 9
 
-    val currBasin = basin ?: ++basinCount
-    input[row][column] = currBasin
+    val currBasin = basin ?: basinSizes.size
 
     basinSizes.getOrDefault(currBasin, 0)
         .let { basinSizes.put(currBasin, it + 1) }
 
-    if (row > 0) findBasin(column, row - 1, currBasin, input)
-    if (column > 0) findBasin(column - 1, row, currBasin, input)
-    if (row + 1 < input.size) findBasin(column, row + 1, currBasin, input)
-    if (column + 1 < input[0].size) findBasin(column + 1, row, currBasin, input)
+    findBasin(column, row - 1, currBasin)
+    findBasin(column - 1, row, currBasin)
+    findBasin(column, row + 1, currBasin)
+    findBasin(column + 1, row, currBasin)
 }
