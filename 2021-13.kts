@@ -32,7 +32,7 @@ for (dot in dots) {
     }
 }
 
-fun translate(command: Pair<String, Int>, coordinates: MutableSet<Pair<Int, Int>>): Set<Pair<Int, Int>> {
+fun foldCoordinates(command: Pair<String, Int>, coordinates: MutableSet<Pair<Int, Int>>): Set<Pair<Int, Int>> {
     val setB = coordinates.filter { (x, y) -> (x.takeIf { command.first == "x" } ?: y) > command.second }
     coordinates.removeAll { (x, y) -> (x.takeIf { command.first == "x" } ?: y) >= command.second }
 
@@ -56,7 +56,7 @@ fun translate(command: Pair<String, Int>, coordinates: MutableSet<Pair<Int, Int>
  * Part 2
  */
 
-repeat(commands.size) { i -> translate(commands[i], coordinates) }
+commands.forEach { foldCoordinates(it, coordinates) }
 
 List(6) { row -> List<String>(39) { col -> if (Pair(col, row) in coordinates) "#" else " " } }
     .forEach { println(it) } // LKREBPRK
