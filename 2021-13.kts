@@ -37,13 +37,12 @@ fun foldCoordinates(command: Pair<String, Int>, coordinates: MutableSet<Pair<Int
     coordinates.removeAll { (x, y) -> (x.takeIf { command.first == "x" } ?: y) >= command.second }
 
     setB.map { (x, y) ->
-        val newX = x - (x - command.second) * 2
-        val newY = y - (y - command.second) * 2
-
         if (command.first == "x") {
-            Pair(newX, y).also { if (newX < 0) throw RuntimeException("negative X") }
+            (x - (x - command.second) * 2)
+                .let { Pair(it, y) }
         } else {
-            Pair(x, newY).also { if (newY < 0) throw RuntimeException("negative Y") }
+            (y - (y - command.second) * 2)
+                .let { Pair(x, it) }
         }
     }.let { coordinates.addAll(it) }
 
@@ -58,5 +57,5 @@ fun foldCoordinates(command: Pair<String, Int>, coordinates: MutableSet<Pair<Int
 
 commands.forEach { foldCoordinates(it, coordinates) }
 
-List(6) { row -> List<String>(39) { col -> if (Pair(col, row) in coordinates) "#" else " " } }
+List(6) { row -> List(39) { col -> if (Pair(col, row) in coordinates) "#" else " " } }
     .forEach { println(it) } // LKREBPRK
