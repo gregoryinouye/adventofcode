@@ -18,7 +18,6 @@ val commands = mutableListOf<Pair<String, Int>>()
 var isCommand = false
 
 for (dot in dots) {
-
     if (dot.isEmpty()) {
         isCommand = true
         continue
@@ -59,9 +58,5 @@ fun translate(command: Pair<String, Int>, coordinates: MutableSet<Pair<Int, Int>
 
 repeat(commands.size) { i -> translate(commands[i], coordinates) }
 
-coordinates.sortedBy { it.first }
-    .also(::println)
-
-List(6) { row ->
-    List<String>(39) { col -> if (Pair(col, row) in coordinates) "#" else " " }.toMutableList()
-}.forEach { println(it) } // LKREBPRK
+List(6) { row -> List<String>(39) { col -> if (Pair(col, row) in coordinates) "#" else " " } }
+    .forEach { println(it) } // LKREBPRK
