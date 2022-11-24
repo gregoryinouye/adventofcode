@@ -7,6 +7,8 @@ from pathlib import Path
 filepath = Path(__file__)
 test_filename = filepath.stem.split('_')[0] + '.txt'
 test_filepath = filepath.parent / test_filename
+part_one_answer = 232
+part_two_answer = 1783
 
 
 def parse(input_path: Path) -> str:
