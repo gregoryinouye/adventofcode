@@ -9,11 +9,11 @@ test_filename = filepath.stem.split('_')[0] + '.txt'
 test_filepath = filepath.parent / test_filename
 
 
-def parse(input_path: Path):
+def parse(input_path: Path) -> str:
     return input_path.read_text().strip()
 
 
-def part_one(parentheses: str) -> (int, Optional[int]):
+def part_one(parentheses: str) -> int:
     floor = 0
 
     for i, parenthesis in enumerate(parentheses):

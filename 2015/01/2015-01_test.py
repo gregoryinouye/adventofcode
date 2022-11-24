@@ -13,9 +13,9 @@ def test_input():
     return solution.parse(solution.test_filepath)
 
 
-def test_part1_example1(test_input):
+def test_part_one(test_input):
     assert solution.part_one(test_input) == 232
 
 
-def test_part2_example2(test_input):
+def test_part_two(test_input):
     assert solution.part_two(test_input) == 1783
