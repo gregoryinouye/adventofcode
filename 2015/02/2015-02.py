@@ -15,7 +15,7 @@ def parse(input_path: Path) -> list[tuple[int]]:
     return [tuple(map(int, package.split('x'))) for package in packages]
 
 
-def part_one(packages: list[str]) -> int:
+def part_one(packages: list[tuple[int]]) -> int:
     paper = 0
 
     for length, width, height in packages:
@@ -29,7 +29,7 @@ def part_one(packages: list[str]) -> int:
     return paper
 
 
-def part_two(packages: list[str]) -> int:
+def part_two(packages: list[tuple[int]]) -> int:
     ribbon = 0
 
     for length, width, height in packages:
@@ -46,5 +46,11 @@ if __name__ == '__main__':
         print(f"\n{path_str}:")
         puzzle_input = parse(Path(path_str))
 
-        print('Part One:', part_one(puzzle_input))
-        print('Part Two:', part_two(puzzle_input))
+        part_one_actual = part_one(puzzle_input)
+        part_two_actual = part_two(puzzle_input)
+
+        result_one = '\u2705 ' if part_one_actual == part_one_answer else '\u274C'
+        result_two = '\u2705 ' if part_two_actual == part_two_answer else '\u274C'
+
+        print(result_one, 'Part One:', part_one_actual)
+        print(result_two, 'Part Two:', part_two_actual)
