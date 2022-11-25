@@ -25,11 +25,9 @@ def test_part_one_with_example_input3():
     assert solution.part_one(['turn on 0,0 through 999,999', 'turn off 499,499 through 500,500']) == 999_996
 
 
-@pytest.mark.skip
 def test_part_one(test_input):
     assert solution.part_one(test_input) == solution.part_one_answer
 
 
-@pytest.mark.skip
 def test_part_two(test_input):
     assert solution.part_two(test_input) == solution.part_two_answer
