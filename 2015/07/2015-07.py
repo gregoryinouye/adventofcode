@@ -21,20 +21,8 @@ operations: dict[str, Callable[..., int]] = {
 }
 
 
-# case: a AND b, a OR b, a RSHIFT INT, a LSHIFT INT
-# case: NOT a
-# case: INT
-
-
 def parse(input_path: Path) -> list[str]:
     return input_path.read_text().strip().split('\n')
-
-
-def process_instruction():
-    pass
-
-
-#
 
 
 def part_one(steps: list[str], wire_of_interest: str) -> int:
@@ -50,26 +38,20 @@ def part_one(steps: list[str], wire_of_interest: str) -> int:
         else:
             wires_to_process.append((input_split, wire))
 
-    print(wires)
-    print(wires_to_process)
-
     while wire_of_interest not in wires and wires_to_process:
         wire_input, wire = wires_to_process.popleft()
         op = None
         input_wires = set()
 
-        # wire only, since we already processed INTs above?
         if len(wire_input) == 1:
             assert wire_input[0].isdigit() is False
             input_wires.add(wire_input[0])
 
-        # NOT only?
         if len(wire_input) == 2:
             op = wire_input[0]
             assert op == 'NOT'
             input_wires.add(wire_input[1])
 
-        # AND, OR, LSHIFT, RSHIFT
         if len(wire_input) == 3:
             op = wire_input[1]
             input_wires.update(filter(lambda item: item.islower(), wire_input))
@@ -80,7 +62,6 @@ def part_one(steps: list[str], wire_of_interest: str) -> int:
             else:
                 input_values = map(lambda x: int(x) if x.isdigit() else wires[x],
                                    filter(lambda item: not item.isupper(), wire_input))
-                ## bug - looking up an operation when op is None
                 wires[wire] = operations[op](*input_values)
         else:
             wires_to_process.append((wire_input, wire))
