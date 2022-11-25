@@ -5,7 +5,7 @@ import re
 from collections import deque
 from pathlib import Path
 import sys
-from typing import Callable
+from typing import Callable, Optional
 
 filepath = Path(__file__)
 test_filename = filepath.stem + '.txt'
@@ -31,51 +31,37 @@ def modify_data_for_part_two(data: list[str]) -> list[str]:
     return [s if not re.match(r'\d+ -> b$', s) else new_b for s in data]
 
 
-def part_one(steps: list[str], wire_of_interest: str) -> int:
+def parse_instruction(instruction: str) -> tuple[Optional[str], list[str], str]:
+    wire_input, output_wire = instruction.split(' -> ')
+    input_split: list[str] = wire_input.split(' ')
+    command: Optional[str] = next((item for item in input_split if item.isupper()), None)
+    input_wires: list[str] = [item for item in input_split if not item.isupper()]
+    return command, input_wires, output_wire
+
+
+def part_one(steps: list[str], result_wire: str) -> int:
     wires: dict[str, int] = {}
-    wires_to_process: deque[tuple[str, str]] = deque([])
+    wires_to_process: deque[tuple[Optional[str], list[str], str]]
+    wires_to_process = deque(parse_instruction(instruction) for instruction in steps)
 
-    for step in steps:
-        wire_input, wire = step.split(' -> ')
-        input_split = wire_input.split(' ')
+    while result_wire not in wires and wires_to_process:
+        op, input_wires, output_wire = wires_to_process.popleft()
+        input_values = [int(wire) if wire.isdigit() else wires.get(wire, -1) for wire in input_wires]
 
-        if len(input_split) == 1 and input_split[0].isdigit():
-            wires[wire] = int(input_split[0])
-        else:
-            wires_to_process.append((input_split, wire))
+        # if an input wire's value is currently unknown, skip and replace on queue
+        if -1 in input_values:
+            wires_to_process.append((op, input_wires, output_wire))
+            continue
 
-    while wire_of_interest not in wires and wires_to_process:
-        wire_input, wire = wires_to_process.popleft()
-        op = None
-        input_wires = set()
+        wires[output_wire] = input_values[0] if op is None else operations[op](*input_values)
 
-        if len(wire_input) == 1:
-            assert wire_input[0].isdigit() is False
-            input_wires.add(wire_input[0])
-
-        if len(wire_input) == 2:
-            op = wire_input[0]
-            assert op == 'NOT'
-            input_wires.add(wire_input[1])
-
-        if len(wire_input) == 3:
-            op = wire_input[1]
-            input_wires.update(filter(lambda item: item.islower(), wire_input))
-
-        if input_wires.issubset(wires.keys()):
-            if op is None:
-                wires[wire] = wires[input_wires.pop()]
-            else:
-                input_values = map(lambda x: int(x) if x.isdigit() else wires[x],
-                                   filter(lambda item: not item.isupper(), wire_input))
-                wires[wire] = operations[op](*input_values)
-        else:
-            wires_to_process.append((wire_input, wire))
-
-    return wires[wire_of_interest]
+    return wires[result_wire]
 
 
-part_two = part_one
+def part_two(steps: list[str], result_wire: str):
+    modified_steps = modify_data_for_part_two(steps)
+    return part_one(modified_steps, result_wire)
+
 
 if __name__ == '__main__':
     paths = [test_filename] if len(sys.argv) <= 1 else sys.argv[1:]
@@ -85,8 +71,7 @@ if __name__ == '__main__':
         puzzle_input = parse(Path(path_str))
 
         part_one_actual = part_one(puzzle_input, 'a')
-        part_two_input = modify_data_for_part_two(puzzle_input)
-        part_two_actual = part_two(part_two_input, 'a')
+        part_two_actual = part_two(puzzle_input, 'a')
 
         result_one = '\u2705 ' if part_one_actual == part_one_answer else '\u274c '
         result_two = '\u2705 ' if part_two_actual == part_two_answer else '\u274c '

@@ -13,11 +13,6 @@ def test_input():
 
 
 @pytest.fixture
-def test_part_two_input(test_input):
-    return solution.modify_data_for_part_two(test_input)
-
-
-@pytest.fixture
 def test_example_input():
     return [
         '123 -> x',
@@ -42,5 +37,5 @@ def test_part_one(test_input):
     assert solution.part_one(test_input, 'a') == solution.part_one_answer
 
 
-def test_part_two(test_part_two_input):
-    assert solution.part_two(test_part_two_input, 'a') == solution.part_two_answer
+def test_part_two(test_input):
+    assert solution.part_two(test_input, 'a') == solution.part_two_answer
