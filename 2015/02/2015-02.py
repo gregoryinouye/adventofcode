@@ -4,7 +4,7 @@ import sys
 from pathlib import Path
 
 filepath = Path(__file__)
-test_filename = filepath.stem.split('_')[0] + '.txt'
+test_filename = filepath.stem + '.txt'
 test_filepath = filepath.parent / test_filename
 part_one_answer = 1588178
 part_two_answer = 3783758

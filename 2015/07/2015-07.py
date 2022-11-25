@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 
 import operator
+import re
 from collections import deque
 from pathlib import Path
 import sys
 from typing import Callable
 
 filepath = Path(__file__)
-test_filename = filepath.stem.split('_')[0] + '.txt'
+test_filename = filepath.stem + '.txt'
 test_filepath = filepath.parent / test_filename
 part_one_answer = 16076
 part_two_answer = 2797
@@ -23,6 +24,11 @@ operations: dict[str, Callable[..., int]] = {
 
 def parse(input_path: Path) -> list[str]:
     return input_path.read_text().strip().split('\n')
+
+
+def modify_data_for_part_two(data: list[str]) -> list[str]:
+    new_b = f'{part_one_answer} -> b'
+    return [s if not re.match(r'\d+ -> b$', s) else new_b for s in data]
 
 
 def part_one(steps: list[str], wire_of_interest: str) -> int:
@@ -79,7 +85,8 @@ if __name__ == '__main__':
         puzzle_input = parse(Path(path_str))
 
         part_one_actual = part_one(puzzle_input, 'a')
-        part_two_actual = part_two(puzzle_input)
+        part_two_input = modify_data_for_part_two(puzzle_input)
+        part_two_actual = part_two(part_two_input, 'a')
 
         result_one = '\u2705 ' if part_one_actual == part_one_answer else '\u274c '
         result_two = '\u2705 ' if part_two_actual == part_two_answer else '\u274c '

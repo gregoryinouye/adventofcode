@@ -15,6 +15,11 @@ def test_input():
 
 
 @pytest.fixture
+def test_part_two_input(test_input):
+    return solution.modify_data_for_part_two(test_input)
+
+
+@pytest.fixture
 def test_example_input():
     return [
         '123 -> x',
@@ -39,7 +44,5 @@ def test_part_one(test_input):
     assert solution.part_one(test_input, 'a') == solution.part_one_answer
 
 
-def test_part_two(test_input):
-    new_b = f'{solution.part_one_answer} -> b'
-    test_input_with_new_b = [s if not re.match(r'\d+ -> b$', s) else new_b for s in test_input]
-    assert solution.part_two(test_input_with_new_b, 'a') == solution.part_two_answer
+def test_part_two(test_part_two_input):
+    assert solution.part_two(test_part_two_input, 'a') == solution.part_two_answer

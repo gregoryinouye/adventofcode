@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 
 import sys
-from typing import Optional
 from pathlib import Path
 
 filepath = Path(__file__)
-test_filename = filepath.stem.split('_')[0] + '.txt'
+test_filename = filepath.stem + '.txt'
 test_filepath = filepath.parent / test_filename
 part_one_answer = 2081
 part_two_answer = 2341
@@ -65,7 +64,6 @@ def part_two(directions: str) -> int:
             visited.add((x1, y1))
 
     return len(visited)
-
 
 
 if __name__ == '__main__':

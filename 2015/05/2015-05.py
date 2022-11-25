@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 
-import hashlib
 from pathlib import Path
 import sys
 
 filepath = Path(__file__)
-test_filename = filepath.stem.split('_')[0] + '.txt'
+test_filename = filepath.stem + '.txt'
 test_filepath = filepath.parent / test_filename
 part_one_answer = 258
 part_two_answer = 53
