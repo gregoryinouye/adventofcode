@@ -55,8 +55,6 @@ if __name__ == '__main__':
         print(f"\n{path_str}:")
         puzzle_input = parse(Path(path_str))
 
-        print(puzzle_input)
-
         part_one_actual = part_one(puzzle_input)
         part_two_actual = part_two(puzzle_input)
 
