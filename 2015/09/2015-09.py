@@ -28,7 +28,10 @@ def process_distances(distances: list[str]) -> dict[str, list[tuple[str, int]]]:
         reverse_array.append((start, miles))
         processed[end] = reverse_array
 
-    return {k: sorted(v, key=lambda pair: pair[1]) for k, v in processed.items()}
+    for distances in processed.values():
+        distances.sort(key=lambda pair: pair[1])
+
+    return processed
 
 
 def part_one(distance_data: list[str]) -> int:
