@@ -35,7 +35,7 @@ def get_move_score(move: str) -> int:
         return 3
 
 
-def evaluate(opponent, player) -> int:
+def get_turn_score(opponent, player) -> int:
     if opponent == player:
         return 3
     elif (opponent, player) in {('ROCK', 'PAPER'), ('PAPER', 'SCISSORS'), ('SCISSORS', 'ROCK')}:
@@ -50,11 +50,11 @@ def get_strategy_move(letter: str, opponent: str) -> str:
     strategy_modifier = None
 
     if letter == 'X':
-        strategy_modifier = 1
+        strategy_modifier = 2
     if letter == 'Y':
         strategy_modifier = 0
     if letter == 'Z':
-        strategy_modifier = -1
+        strategy_modifier = 1
 
     player_index = (opponent_index + strategy_modifier) % 3
     return options[player_index]
@@ -66,7 +66,7 @@ def part_one(lines: str) -> int:
 
     for line in lines_split:
         opponent, player = map(get_move, line.split(' '))
-        score += evaluate(opponent, player) + get_move_score(player)
+        score += get_turn_score(opponent, player) + get_move_score(player)
 
     return score
 
@@ -76,9 +76,10 @@ def part_two(lines: str) -> int:
     score = 0
 
     for line in lines_split:
-        opponent, player_strategy = line.split(' ')
-        player = get_strategy_move(opponent, player_strategy)
-        score += evaluate(opponent, player) + get_move_score(player)
+        opponent_strategy, player_strategy = line.split(' ')
+        opponent = get_move(opponent_strategy)
+        player = get_strategy_move(player_strategy, opponent)
+        score += get_turn_score(opponent, player) + get_move_score(player)
 
     return score
 
