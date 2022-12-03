@@ -14,7 +14,7 @@ def test_input():
 
 @pytest.fixture
 def test_example_input():
-    return 'A Y\nB X\nC Z'
+    return ['A Y', 'B X', 'C Z']
 
 
 def test_part_one_with_example_input(test_example_input):

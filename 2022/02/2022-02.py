@@ -10,8 +10,9 @@ part_one_answer = 13682
 part_two_answer = 12881
 
 
-def parse(input_path: Path) -> str:
-    return input_path.read_text().strip()
+def parse(input_path: Path) -> list[str]:
+    return input_path.read_text().strip().split('\n')
+
 
 
 def get_move(letter: str) -> str:
@@ -60,22 +61,20 @@ def get_strategy_move(letter: str, opponent: str) -> str:
     return options[player_index]
 
 
-def part_one(lines: str) -> int:
-    lines_split = lines.split('\n')
+def part_one(lines: list[str]) -> int:
     score = 0
 
-    for line in lines_split:
+    for line in lines:
         opponent, player = map(get_move, line.split(' '))
         score += get_turn_score(opponent, player) + get_move_score(player)
 
     return score
 
 
-def part_two(lines: str) -> int:
-    lines_split = lines.split('\n')
+def part_two(lines: list[str]) -> int:
     score = 0
 
-    for line in lines_split:
+    for line in lines:
         opponent_strategy, player_strategy = line.split(' ')
         opponent = get_move(opponent_strategy)
         player = get_strategy_move(player_strategy, opponent)
