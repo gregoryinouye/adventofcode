@@ -10,21 +10,19 @@ part_one_answer = 72017
 part_two_answer = 212520
 
 
-def parse(input_path: Path) -> str:
-    return input_path.read_text().strip()
+def parse(input_path: Path) -> list[str]:
+    return input_path.read_text().strip().split('\n\n')
 
 
-def part_one(lines: str) -> int:
-    lines_split = lines.split('\n\n')
-    elves = [line.split('\n') for line in lines_split]
+def part_one(lines: list[str]) -> int:
+    elves = [line.split('\n') for line in lines]
     elves_calories = [sum(map(int, items)) for items in elves]
 
     return sorted(elves_calories)[-1]
 
 
-def part_two(lines: str) -> int:
-    lines_split = lines.split('\n\n')
-    elves = [line.split('\n') for line in lines_split]
+def part_two(lines: list[str]) -> int:
+    elves = [line.split('\n') for line in lines]
     elves_calories = [sum(map(int, items)) for items in elves]
 
     return sum(sorted(elves_calories)[-3:])
