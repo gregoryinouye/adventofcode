@@ -14,7 +14,6 @@ def parse(input_path: Path) -> list[str]:
     return input_path.read_text().strip().split('\n')
 
 
-
 def get_move(letter: str) -> str:
     match letter:
         case ('A' | 'X'):
