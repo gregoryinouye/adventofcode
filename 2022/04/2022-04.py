@@ -10,52 +10,32 @@ part_one_answer = 494
 part_two_answer = 833
 
 
-def parse(input_path: Path) -> str:
-    return input_path.read_text().strip()
+def parse(input_path: Path) -> list[str]:
+    return input_path.read_text().strip().split('\n')
 
 
-def part_one(lines: str) -> int:
-    lines_split = lines.split('\n')
+def part_one(lines: list[str]) -> int:
     count = 0
-    for line in lines_split:
-        pair1, pair2 = line.split(',')
-        pair1start, pair1end = pair1.split('-')
-        pair2start, pair2end = pair2.split('-')
 
-        pair1start = int(pair1start)
-        pair1end = int(pair1end)
-        pair2start = int(pair2start)
-        pair2end = int(pair2end)
+    for line in lines:
+        pairs = line.replace('-', ',').split(',')
+        start1, end1, start2, end2 = map(int, pairs)
 
-        if pair1start <= pair2start and pair1end >= pair2end:
-            count += 1
-        elif pair2start <= pair1start and pair2end >= pair1end:
+        if (start1 <= start2 and end2 <= end1) or \
+                (start2 <= start1 and end1 <= end2):
             count += 1
 
     return count
 
 
-def part_two(lines: str) -> int:
-    lines_split = lines.split('\n')
+def part_two(lines: list[str]) -> int:
     count = 0
-    for line in lines_split:
-        pair1, pair2 = line.split(',')
-        pair1start, pair1end = pair1.split('-')
-        pair2start, pair2end = pair2.split('-')
 
-        pair1start = int(pair1start)
-        pair1end = int(pair1end)
-        pair2start = int(pair2start)
-        pair2end = int(pair2end)
+    for line in lines:
+        pairs = line.replace('-', ',').split(',')
+        start1, end1, start2, end2 = map(int, pairs)
 
-        set1 = set()
-        for i in range(pair1start, pair1end + 1):
-            set1.add(i)
-        set2 = set()
-        for i in range(pair2start, pair2end + 1):
-            set2.add(i)
-        intersect = set1.intersection(set2)
-        if len(intersect) != 0:
+        if start1 <= start2 <= end1 or start2 <= start1 <= end2:
             count += 1
 
     return count

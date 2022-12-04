@@ -14,7 +14,15 @@ def test_input():
 
 @pytest.fixture
 def test_example_input():
-    return '2-4,6-8\n2-3,4-5\n5-7,7-9\n2-8,3-7\n6-6,4-6\n2-6,4-8'
+    return [
+        '2-4,6-8',
+        '2-3,4-5',
+        '5-7,7-9',
+        '2-8,3-7',
+        '6-6,4-6',
+        '2-6,4-8'
+    ]
+
 
 def test_part_one_with_example_input(test_example_input):
     assert solution.part_one(test_example_input) == 2
