@@ -31,8 +31,9 @@ def get_move_score(move: str) -> int:
         return 1
     elif move == 'PAPER':
         return 2
-    else:
+    elif move == 'SCISSORS':
         return 3
+    raise Exception('unknown move')
 
 
 def get_turn_score(opponent, player) -> int:
