@@ -25,45 +25,40 @@ def get_crates_and_instructions(lines: str) -> tuple[list[str], list[map]]:
     return crates, instructions
 
 
-def build_stacks(crates: list[str]) -> dict[int, list[str]]:
-    crates_map = {}
+def build_stacks(crates: list[str]) -> list[list[str]]:
+    stacks = [[] for _ in range(len(crates[-1]))]
     reversed_crates = reversed(crates)
 
     for crate_row in reversed_crates:
         for i, crate_char in enumerate(crate_row):
             if crate_char != ' ':
-                crates_map[i + 1] = crates_map.get(i + 1, [])
-                crates_map[i + 1].append(crate_char)
+                stacks[i].append(crate_char)
 
-    return crates_map
+    return stacks
 
 
 def part_one(lines: str) -> str:
     crates, instructions = get_crates_and_instructions(lines)
-    crates_map = build_stacks(crates)
+    stacks = build_stacks(crates)
 
     for quantity, from_stack, to_stack in instructions:
         for i in range(quantity):
-            crate = crates_map[from_stack].pop()
-            crates_map[to_stack].append(crate)
+            crate = stacks[from_stack - 1].pop()
+            stacks[to_stack - 1].append(crate)
 
-    top_crates = (crates_map[key][-1] for key in range(1, len(crates_map) + 1))
-
-    return ''.join(top_crates)
+    return ''.join(stack[-1] for stack in stacks)
 
 
 def part_two(lines: str) -> str:
     crates, instructions = get_crates_and_instructions(lines)
-    crates_map = build_stacks(crates)
+    stacks = build_stacks(crates)
 
     for quantity, from_stack, to_stack in instructions:
-        crates_to_move = crates_map[from_stack][-quantity:]
-        del crates_map[from_stack][-quantity:]
-        crates_map[to_stack].extend(crates_to_move)
+        crates_to_move = stacks[from_stack - 1][-quantity:]
+        stacks[to_stack - 1].extend(crates_to_move)
+        del stacks[from_stack - 1][-quantity:]
 
-    top_crates = (crates_map[key][-1] for key in range(1, len(crates_map) + 1))
-
-    return ''.join(top_crates)
+    return ''.join(stack[-1] for stack in stacks)
 
 
 if __name__ == '__main__':
