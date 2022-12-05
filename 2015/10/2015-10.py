@@ -54,7 +54,7 @@ if __name__ == '__main__':
     paths = [test_filename] if len(sys.argv) <= 1 else sys.argv[1:]
 
     for path_str in paths:
-        print(f"\n{path_str}:")
+        print(f'\n{path_str}:')
         puzzle_input = parse(Path(path_str))
 
         part_one_actual = part_one(puzzle_input)
