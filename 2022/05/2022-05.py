@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 
-import re
 import sys
-from collections import deque
 from pathlib import Path
 
 filepath = Path(__file__)
@@ -16,82 +14,56 @@ def parse(input_path: Path) -> str:
     return input_path.read_text().rstrip()
 
 
-def part_one(lines: str) -> str:
-    crates, instructions = lines.split('\n\n')
-    crates_split = crates.split('\n')
+def get_crates_and_instructions(lines: str) -> tuple[list[str], list[map]]:
+    crates_raw, instructions_raw = lines.split('\n\n')
+    crates_rows = crates_raw.split('\n')
+    instructions_rows = instructions_raw.split('\n')
 
+    crates = [row[1::4] for row in crates_rows if row[1].isdigit() is False]
+    instructions = [map(int, row.split(' ')[1::2]) for row in instructions_rows]
+
+    return crates, instructions
+
+
+def build_stacks(crates: list[str]) -> dict[int, list[str]]:
     crates_map = {}
+    reversed_crates = reversed(crates)
 
-    for crate_line in crates_split:
-        crate_split = list(crate_line)
-        for i, crate_char in enumerate(crate_split):
-            if crate_char == ' ':
-                continue
-            elif crate_char == '[':
-                continue
-            elif crate_char == ']':
-                continue
-            elif crate_char.isdigit():
-                break
-            else:
-                column = 1 + (i - 1) // 4
-                crates_map[column] = crates_map.get(column, deque([]))
-                crates_map[column].append(crate_char)
+    for crate_row in reversed_crates:
+        for i, crate_char in enumerate(crate_row):
+            if crate_char != ' ':
+                crates_map[i + 1] = crates_map.get(i + 1, [])
+                crates_map[i + 1].append(crate_char)
 
-    instructions_split = instructions.split('\n')
+    return crates_map
 
-    for instruction in instructions_split:
-        pattern = re.compile(r'\d+')
-        qty_to_move, from_stack, to_stack = pattern.findall(instruction)
-        for i in range(int(qty_to_move)):
-            crates_map[int(to_stack)].appendleft(crates_map[int(from_stack)].popleft())
 
-    result = []
-    for key, value in sorted(crates_map.items(), key=lambda kv: kv[0]):
-        result.append(str(value.popleft()))
+def part_one(lines: str) -> str:
+    crates, instructions = get_crates_and_instructions(lines)
+    crates_map = build_stacks(crates)
 
-    return ''.join(result)
+    for quantity, from_stack, to_stack in instructions:
+        for i in range(quantity):
+            crate = crates_map[from_stack].pop()
+            crates_map[to_stack].append(crate)
+
+    top_crates = (crates_map[key][-1] for key in range(1, len(crates_map) + 1))
+
+    return ''.join(top_crates)
 
 
 def part_two(lines: str) -> str:
-    crates, instructions = lines.split('\n\n')
-    crates_split = crates.split('\n')
+    crates, instructions = get_crates_and_instructions(lines)
+    crates_map = build_stacks(crates)
 
-    crates_map = {}
+    for quantity, from_stack, to_stack in instructions:
+        crates_to_move = crates_map[from_stack][-quantity:]
+        del crates_map[from_stack][-quantity:]
+        crates_map[to_stack].extend(crates_to_move)
 
-    for crate_line in crates_split:
-        crate_split = list(crate_line)
-        for i, crate_char in enumerate(crate_split):
-            if crate_char == ' ':
-                continue
-            elif crate_char == '[':
-                continue
-            elif crate_char == ']':
-                continue
-            elif crate_char.isdigit():
-                break
-            else:
-                column = 1 + (i - 1) // 4
-                crates_map[column] = crates_map.get(column, deque([]))
-                crates_map[column].append(crate_char)
+    top_crates = (crates_map[key][-1] for key in range(1, len(crates_map) + 1))
 
-    instructions_split = instructions.split('\n')
-
-    for instruction in instructions_split:
-        pattern = re.compile(r'\d+')
-        qty_to_move, from_stack, to_stack = pattern.findall(instruction)
-        move = []
-        for i in range(int(qty_to_move)):
-            move.append(crates_map[int(from_stack)].popleft())
-        move.reverse()
-        for crate in move:
-            crates_map[int(to_stack)].appendleft(crate)
-
-    result = []
-    for key, value in sorted(crates_map.items(), key=lambda kv: kv[0]):
-        result.append(str(value.popleft()))
-
-    return ''.join(result)
+    return ''.join(top_crates)
 
 
 if __name__ == '__main__':
