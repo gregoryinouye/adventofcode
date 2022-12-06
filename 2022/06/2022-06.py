@@ -14,20 +14,19 @@ def parse(input_path: Path) -> str:
     return input_path.read_text().strip()
 
 
-def part_one(lines: str) -> int:
-    for i in range(len(lines)):
-        if len(set(lines[i:i+4])) == 4:
-            return i + 4
-
+def find_index_of_consecutive_unique_chars(chars: str, n: int) -> int:
+    for i in range(len(chars)):
+        if len(set(chars[i:i + n])) == n:
+            return i + n
     return -1
+
+
+def part_one(lines: str) -> int:
+    return find_index_of_consecutive_unique_chars(lines, 4)
 
 
 def part_two(lines: str) -> int:
-    for i in range(len(lines)):
-        if len(set(lines[i:i + 14])) == 14:
-            return i + 14
-
-    return -1
+    return find_index_of_consecutive_unique_chars(lines, 14)
 
 
 if __name__ == '__main__':
