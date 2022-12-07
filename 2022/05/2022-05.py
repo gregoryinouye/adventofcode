@@ -19,7 +19,7 @@ def get_crates_and_instructions(lines: str) -> tuple[list[str], list[map]]:
     crates_rows = crates_raw.split('\n')
     instructions_rows = instructions_raw.split('\n')
 
-    crates = [row[1::4] for row in crates_rows if row[1].isdigit() is False]
+    crates = [row[1::4] for row in crates_rows]
     instructions = [map(int, row.split(' ')[1::2]) for row in instructions_rows]
 
     return crates, instructions
@@ -31,7 +31,7 @@ def build_stacks(crates: list[str]) -> list[list[str]]:
 
     for crate_row in reversed_crates:
         for i, crate_char in enumerate(crate_row):
-            if crate_char != ' ':
+            if crate_char.isupper():
                 stacks[i].append(crate_char)
 
     return stacks
