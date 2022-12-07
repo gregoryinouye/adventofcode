@@ -18,10 +18,10 @@ def parse(input_path: Path) -> list[str]:
 
 class Node:
     def __init__(self, name: str, parent: Optional[Node]):
-        self.name = name
-        self.files = []
-        self.directories = {}
-        self.parent = parent
+        self.name: str = name
+        self.files: list[tuple[str, int]] = []
+        self.directories: dict[str, Node] = {}
+        self.parent: Optional[Node] = parent
 
     def size(self) -> int:
         return sum(map(lambda file: file[1], self.files)) \
