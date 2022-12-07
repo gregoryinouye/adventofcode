@@ -45,6 +45,8 @@ def build_filetree(commands: list[str]) -> Node:
                 pwd.directories[directory_name] = Node(directory_name, pwd)
             case [size_str, filename]:
                 pwd.files.append((filename, int(size_str)))
+            case _:
+                raise Exception(f'unexpected command: {command}')
 
     return root_directory
 
