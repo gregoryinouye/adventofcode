@@ -12,8 +12,8 @@ part_one_answer = 1348005
 part_two_answer = 12785886
 
 
-def parse(input_path: Path) -> str:
-    return input_path.read_text().strip()
+def parse(input_path: Path) -> list[str]:
+    return input_path.read_text().strip().split('\n')
 
 
 class Node:
@@ -27,70 +27,58 @@ class Node:
         return sum(map(lambda file: file[1], self.files)) \
             + sum(map(lambda directory: directory.size(), self.directories.values()))
 
-    def __str__(self):
-        return f'<{self.name}, {self.directories}, {self.files}>'
-
-    def __repr__(self):
-        return self.__str__()
 
 def build_filetree(commands: list[str]) -> Node:
-    main_dir = Node('/', None)
-    pwd = main_dir
+    root_directory = pwd = Node('/', None)
 
     for command in commands:
-        if command == '$ cd /':
-            pwd = main_dir
-        elif command == '$ cd ..':
-            pwd = pwd.parent
-        elif command.startswith('$ cd'):
-            prev_pwd = pwd
-            _, _, pwd_name = command.split(' ')
-            if pwd_name not in pwd.directories:
-                prev_pwd.directories[pwd_name] = Node(pwd_name, prev_pwd)
-            pwd = pwd.directories[pwd_name]
-        elif command.startswith('$ ls'):
-            pass
-        elif command.startswith('dir'):
-            _, dir_name = command.split(' ')
-            pwd.directories[dir_name] = Node(dir_name, pwd)
-        else:
-            size_str, filename = command.split(' ')
-            size = int(size_str)
-            pwd.files.append((filename, size))
-    return main_dir
+        match command.split(' '):
+            case ['$', 'cd', '/']:
+                pwd = root_directory
+            case ['$', 'cd', '..']:
+                pwd = pwd.parent
+            case ['$', 'cd', directory_name]:
+                pwd = pwd.directories[directory_name]
+            case ['$', 'ls']:
+                continue
+            case ['dir', directory_name]:
+                pwd.directories[directory_name] = Node(directory_name, pwd)
+            case [size_str, filename]:
+                pwd.files.append((filename, int(size_str)))
+
+    return root_directory
 
 
-def part_one(lines: str) -> int:
-    commands = lines.split('\n')
-    main_dir = build_filetree(commands)
+def part_one(lines: list[str]) -> int:
+    root_directory = build_filetree(lines)
+    directories = [root_directory]
+    size_sum = 0
 
-    stack = [main_dir]
+    while directories:
+        current_directory: Node = directories.pop()
+        if current_directory.size() < 100000:
+            size_sum += current_directory.size()
+        directories.extend(current_directory.directories.values())
 
-    count = 0
-    while stack:
-        curr: Node = stack.pop()
-        if curr.size() < 100000:
-            count += curr.size()
-        stack.extend(curr.directories.values())
-    return count
+    return size_sum
 
 
-def part_two(lines: str) -> int:
-    commands = lines.split('\n')
-    main_dir = build_filetree(commands)
+def part_two(lines: list[str]) -> int:
+    total_space = 70_000_000
+    space_for_update = 30_000_000
 
-    stack = [main_dir]
+    root_directory = build_filetree(lines)
+    directories = [root_directory]
+    required_space = space_for_update - (total_space - root_directory.size())
+    size_to_delete = float('inf')
 
-    empty_space = 70000000 - main_dir.size()
-    target = 30000000 - empty_space
+    while directories:
+        current_directory: Node = directories.pop()
+        if current_directory.size() > required_space:
+            size_to_delete = min(size_to_delete, current_directory.size())
+        directories.extend(current_directory.directories.values())
 
-    smallest_dir = float('inf')
-    while stack:
-        curr: Node = stack.pop()
-        if curr.size() > target:
-            smallest_dir = min(smallest_dir, curr.size())
-        stack.extend(curr.directories.values())
-    return smallest_dir
+    return size_to_delete
 
 
 if __name__ == '__main__':

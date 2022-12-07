@@ -14,9 +14,31 @@ def test_input():
 
 @pytest.fixture
 def test_example_input():
-    return '$ cd /\n$ ls\ndir a\n14848514 b.txt\n8504156 c.dat\ndir d\n$ cd a\n$ ls\n' \
-           'dir e\n29116 f\n2557 g\n62596 h.lst\n$ cd e\n$ ls\n584 i\n$ cd ..\n' \
-           '$ cd ..\n$ cd d\n$ ls\n4060174 j\n8033020 d.log\n5626152 d.ext\n7214296 k'
+    return [
+        '$ cd /',
+        '$ ls',
+        'dir a',
+        '14848514 b.txt',
+        '8504156 c.dat',
+        'dir d',
+        '$ cd a',
+        '$ ls',
+        'dir e',
+        '29116 f',
+        '2557 g',
+        '62596 h.lst',
+        '$ cd e',
+        '$ ls',
+        '584 i',
+        '$ cd ..',
+        '$ cd ..',
+        '$ cd d',
+        '$ ls',
+        '4060174 j',
+        '8033020 d.log',
+        '5626152 d.ext',
+        '7214296 k'
+    ]
 
 
 def test_part_one_with_example_input(test_example_input):
