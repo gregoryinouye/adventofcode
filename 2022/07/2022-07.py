@@ -57,7 +57,7 @@ def part_one(lines: list[str]) -> int:
     size_sum = 0
 
     while directories:
-        current_directory: Node = directories.pop()
+        current_directory = directories.pop()
         if current_directory.size() < 100000:
             size_sum += current_directory.size()
         directories.extend(current_directory.directories.values())
@@ -75,7 +75,7 @@ def part_two(lines: list[str]) -> int:
     size_to_delete = float('inf')
 
     while directories:
-        current_directory: Node = directories.pop()
+        current_directory = directories.pop()
         if current_directory.size() > required_space:
             size_to_delete = min(size_to_delete, current_directory.size())
         directories.extend(current_directory.directories.values())
