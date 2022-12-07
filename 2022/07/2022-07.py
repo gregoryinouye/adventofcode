@@ -58,26 +58,27 @@ def part_one(lines: list[str]) -> int:
 
     while directories:
         current_directory = directories.pop()
-        if current_directory.size() < 100000:
-            size_sum += current_directory.size()
+        size = current_directory.size()
+        if size < 100000:
+            size_sum += size
         directories.extend(current_directory.directories.values())
 
     return size_sum
 
 
 def part_two(lines: list[str]) -> int:
-    total_space = 70_000_000
-    space_for_update = 30_000_000
-
     root_directory = build_filetree(lines)
     directories = [root_directory]
+    total_space = 70_000_000
+    space_for_update = 30_000_000
     required_space = space_for_update - (total_space - root_directory.size())
     size_to_delete = float('inf')
 
     while directories:
         current_directory = directories.pop()
-        if current_directory.size() > required_space:
-            size_to_delete = min(size_to_delete, current_directory.size())
+        size = current_directory.size()
+        if size > required_space:
+            size_to_delete = min(size_to_delete, size)
         directories.extend(current_directory.directories.values())
 
     return size_to_delete
