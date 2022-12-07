@@ -12,11 +12,6 @@ def test_input():
     return solution.parse(solution.test_filepath)
 
 
-@pytest.fixture
-def test_example_input():
-    return 'bvwbjplbgvbhsrlpgdmjqwftvncz'
-
-
 @pytest.mark.parametrize('test_input,expected', [
     ('bvwbjplbgvbhsrlpgdmjqwftvncz', 5),
     ('nppdvjthqldpwncqszvftbrmjlhg', 6),
