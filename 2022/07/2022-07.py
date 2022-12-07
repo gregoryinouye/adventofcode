@@ -43,7 +43,7 @@ def build_filetree(commands: list[str]) -> Node:
                 continue
             case ['dir', directory_name]:
                 pwd.directories[directory_name] = Node(directory_name, pwd)
-            case [size_str, filename]:
+            case [size_str, filename] if size_str.isdecimal():
                 pwd.files.append((filename, int(size_str)))
             case _:
                 raise Exception(f'unexpected command: {command}')

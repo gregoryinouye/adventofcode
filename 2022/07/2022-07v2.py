@@ -31,7 +31,7 @@ def build_directories(commands: list[str]) -> dict[str, int]:
                 continue
             case ['dir', _]:
                 continue
-            case [size_str, _]:
+            case [size_str, _] if size_str.isdecimal():
                 for i in range(1, len(pwd) + 1):
                     directory_name = '/'.join(pwd[0:i])
                     directories[directory_name] = directories.get(directory_name, 0) + int(size_str)
