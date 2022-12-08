@@ -11,8 +11,8 @@ part_one_answer = 1870
 part_two_answer = 517440
 
 
-def parse(input_path: Path) -> str:
-    return input_path.read_text().strip()
+def parse(input_path: Path) -> list[str]:
+    return input_path.read_text().strip().split('\n')
 
 
 def left_to_right(grid, output):
@@ -59,70 +59,60 @@ def bottom_to_top(grid, output):
                 tallest = current
 
 
-def part_one(lines: str) -> int:
-    lines_split = lines.split('\n')
+def part_one(lines: list[str]) -> int:
+    output_grid = [[0] * len(lines[0]) for _ in lines]
 
-    output_grid = [[0] * len(lines_split[0]) for _ in lines_split]
-
-    left_to_right(lines_split, output_grid)
-    right_to_left(lines_split, output_grid)
-    top_to_bottom(lines_split, output_grid)
-    bottom_to_top(lines_split, output_grid)
+    left_to_right(lines, output_grid)
+    right_to_left(lines, output_grid)
+    top_to_bottom(lines, output_grid)
+    bottom_to_top(lines, output_grid)
 
     return sum(sum(row) for row in output_grid)
 
 
 def to_right(grid, r, c) -> int:
-    current = int(grid[r][c])
+    current = grid[r][c]
     count = 0
 
     for new_c in range(c + 1, len(grid[0])):
-        if int(grid[r][new_c]) < current:
-            count += 1
-        else:
-            count += 1
+        count += 1
+        if grid[r][new_c] >= current:
             break
 
     return count
 
 
 def to_left(grid, r, c) -> int:
-    current = int(grid[r][c])
+    current = grid[r][c]
     count = 0
 
     for new_c in range(c - 1, -1, -1):
-        if int(grid[r][new_c]) < current:
-            count += 1
-        else:
-            count += 1
+        count += 1
+        if grid[r][new_c] >= current:
             break
 
     return count
 
 
 def to_bottom(grid, r, c) -> int:
-    current = int(grid[r][c])
+    current = grid[r][c]
     count = 0
 
     for new_r in range(r + 1, len(grid)):
-        if int(grid[new_r][c]) < current:
-            count += 1
-        else:
-            count += 1
+        count += 1
+        if grid[new_r][c] >= current:
             break
 
     return count
 
 
 def to_top(grid, r, c) -> int:
-    current = int(grid[r][c])
+    current = grid[r][c]
     count = 0
 
     for new_r in range(r - 1, -1, -1):
-        if int(grid[new_r][c]) < current:
-            count += 1
-        else:
-            count += 1
+        count += 1
+        if grid[new_r][c] >= current:
             break
 
     return count
@@ -137,9 +127,8 @@ def get_scenic_score(grid, r, c) -> int:
     return math.prod((right, left, bottom, top))
 
 
-def part_two(lines: str) -> int:
-    lines_split = lines.split('\n')
-    grid = [list(line) for line in lines_split]
+def part_two(lines: list[str]) -> int:
+    grid = [list(map(int, list(line))) for line in lines]
     maximum = -1
 
     for r in range(len(grid)):

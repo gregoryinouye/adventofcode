@@ -14,7 +14,7 @@ def test_input():
 
 @pytest.fixture
 def test_example_input():
-    return '30373\n25512\n65332\n33549\n35390'
+    return ['30373', '25512', '65332', '33549', '35390']
 
 
 def test_part_one_with_example_input(test_example_input):
