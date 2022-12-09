@@ -43,7 +43,7 @@ def build_directories(commands: list[str]) -> dict[str, int]:
 
 def part_one(lines: list[str]) -> int:
     directories = build_directories(lines)
-    return sum(filter(lambda directory: directory < 100_000, directories.values()))
+    return sum(size for size in directories.values() if size < 100_000)
 
 
 def part_two(lines: list[str]) -> int:
@@ -51,7 +51,7 @@ def part_two(lines: list[str]) -> int:
     total_space = 70_000_000
     space_for_update = 30_000_000
     required_space = space_for_update - (total_space - directories[''])
-    return sorted(filter(lambda directory: directory > required_space, directories.values()))[0]
+    return min(size for size in directories.values() if size >= required_space)
 
 
 if __name__ == '__main__':
