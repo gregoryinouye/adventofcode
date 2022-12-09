@@ -22,7 +22,7 @@ directions = {
 }
 
 
-def get_tail_move(head: tuple[int, int], tail: tuple[int, int]) -> tuple[int, int]:
+def get_tail_vector(head: tuple[int, int], tail: tuple[int, int]) -> tuple[int, int]:
     head_r, head_c = head
     tail_r, tail_c = tail
 
@@ -48,7 +48,7 @@ def find_tail_positions(lines: list[str], num_knots: int) -> set[tuple[int, int]
             knots[0] = knots[0][0] + vector[0], knots[0][1] + vector[1]
 
             for j in range(1, len(knots)):
-                tail_vector = get_tail_move(knots[j - 1], knots[j])
+                tail_vector = get_tail_vector(knots[j - 1], knots[j])
                 knots[j] = knots[j][0] + tail_vector[0], knots[j][1] + tail_vector[1]
             positions.add(knots[-1])
 
