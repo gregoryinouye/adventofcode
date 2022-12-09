@@ -14,12 +14,12 @@ def test_input():
 
 @pytest.fixture
 def test_example_input():
-    return 'R 4\nU 4\nL 3\nD 1\nR 4\nD 1\nL 5\nR 2'
+    return ['R 4', 'U 4', 'L 3', 'D 1', 'R 4', 'D 1', 'L 5', 'R 2']
 
 
 @pytest.fixture
 def test_example_input2():
-    return 'R 5\nU 8\nL 8\nD 3\nR 17\nD 10\nL 25\nU 20'
+    return ['R 5', 'U 8', 'L 8', 'D 3', 'R 17', 'D 10', 'L 25', 'U 20']
 
 
 def test_part_one_with_example_input(test_example_input):

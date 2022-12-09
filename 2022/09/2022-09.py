@@ -10,90 +10,61 @@ part_one_answer = 5878
 part_two_answer = 2405
 
 
-def parse(input_path: Path) -> str:
-    return input_path.read_text().strip()
+def parse(input_path: Path) -> list[str]:
+    return input_path.read_text().strip().split('\n')
 
+
+directions = {
+    'U': (-1, 0),
+    'D': (1, 0),
+    'L': (0, -1),
+    'R': (0, 1),
+}
 
 def get_tail_move(head: tuple[int, int], tail: tuple[int, int]) -> tuple[int, int]:
     head_r, head_c = head
     tail_r, tail_c = tail
 
-    if head_r == tail_r and abs(head_c - tail_c) > 1:
-        return 0, 1 if head_c > tail_c else -1
-    if head_c == tail_c and abs(head_r - tail_r) > 1:
-        return 1 if head_r > tail_r else -1, 0
-    if abs(head_c - tail_c) <= 1 and abs(head_r - tail_r) <= 1:
+    if max(abs(head_c - tail_c), abs(head_r - tail_r)) < 2:
         return 0, 0
 
-    return 1 if head_r > tail_r else -1, 1 if head_c > tail_c else -1
+    delta_r = max(min(1, head_r - tail_r), -1)
+    delta_c = max(min(1, head_c - tail_c), -1)
+
+    return delta_r, delta_c
 
 
-def part_one(lines: str) -> int:
-    lines_split = lines.split('\n')
+def find_tail_positions(lines: list[str], num_knots: int = 2) -> set[tuple[int, int]]:
     positions = set()
-    head = {'r': 0, 'c': 0}
-    tail = {'r': 0, 'c': 0}
+    knots = [{'r': 0, 'c': 0} for _ in range(num_knots)]
 
-    for command in lines_split:
-        direction, value = command.split(' ')
-        num = int(value)
+    for command in lines:
+        direction, magnitude = command.split(' ')
+        distance = int(magnitude)
 
-        vector = None
-        match direction, num:
-            case 'L', _:
-                vector = 0, -1
-            case 'R', _:
-                vector = 0, 1
-            case 'D', _:
-                vector = 1, 0
-            case 'U', _:
-                vector = -1, 0
+        vector = directions[direction]
 
-        for i in range(num):
-            head['r'] += vector[0]
-            head['c'] += vector[1]
-            tail_vector = get_tail_move((head['r'], head['c']), (tail['r'], tail['c']))
-            tail['r'] += tail_vector[0]
-            tail['c'] += tail_vector[1]
-            positions.add((tail['r'], tail['c']))
+        for i in range(distance):
+            knots[0]['r'] += vector[0]
+            knots[0]['c'] += vector[1]
 
-    return len(positions)
-
-
-def part_two(lines: str) -> int:
-    lines_split = lines.split('\n')
-    positions = set()
-    head = {'r': 0, 'c': 0}
-    knots = [{'r': 0, 'c': 0} for _ in range(9)]
-
-    for command in lines_split:
-        direction, value = command.split(' ')
-        num = int(value)
-
-        vector = None
-        match direction, num:
-            case 'L', _:
-                vector = 0, -1
-            case 'R', _:
-                vector = 0, 1
-            case 'D', _:
-                vector = 1, 0
-            case 'U', _:
-                vector = -1, 0
-
-        for i in range(num):
-            head['r'] += vector[0]
-            head['c'] += vector[1]
-
-            for i, knot in enumerate(knots):
-                follow = knots[i - 1] if i != 0 else head
-                current = knots[i]
+            for j in range(1, len(knots)):
+                follow = knots[j - 1]
+                current = knots[j]
                 tail_vector = get_tail_move((follow['r'], follow['c']), (current['r'], current['c']))
                 current['r'] += tail_vector[0]
                 current['c'] += tail_vector[1]
             positions.add((knots[-1]['r'], knots[-1]['c']))
 
-    return len(positions)
+    return positions
+
+
+def part_one(lines: list[str]) -> int:
+    return len(find_tail_positions(lines, 2))
+
+
+def part_two(lines: list[str]) -> int:
+    return len(find_tail_positions(lines, 10))
 
 
 if __name__ == '__main__':
