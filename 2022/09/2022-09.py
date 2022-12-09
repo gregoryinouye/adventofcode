@@ -21,6 +21,7 @@ directions = {
     'R': (0, 1),
 }
 
+
 def get_tail_move(head: tuple[int, int], tail: tuple[int, int]) -> tuple[int, int]:
     head_r, head_c = head
     tail_r, tail_c = tail
@@ -34,37 +35,32 @@ def get_tail_move(head: tuple[int, int], tail: tuple[int, int]) -> tuple[int, in
     return delta_r, delta_c
 
 
-def find_tail_positions(lines: list[str], num_knots: int = 2) -> set[tuple[int, int]]:
+def find_tail_positions(lines: list[str], num_knots: int) -> set[tuple[int, int]]:
     positions = set()
-    knots = [{'r': 0, 'c': 0} for _ in range(num_knots)]
+    knots = [(0, 0) for _ in range(num_knots)]
 
     for command in lines:
         direction, magnitude = command.split(' ')
         distance = int(magnitude)
-
         vector = directions[direction]
 
         for i in range(distance):
-            knots[0]['r'] += vector[0]
-            knots[0]['c'] += vector[1]
+            knots[0] = knots[0][0] + vector[0], knots[0][1] + vector[1]
 
             for j in range(1, len(knots)):
-                follow = knots[j - 1]
-                current = knots[j]
-                tail_vector = get_tail_move((follow['r'], follow['c']), (current['r'], current['c']))
-                current['r'] += tail_vector[0]
-                current['c'] += tail_vector[1]
-            positions.add((knots[-1]['r'], knots[-1]['c']))
+                tail_vector = get_tail_move(knots[j - 1], knots[j])
+                knots[j] = knots[j][0] + tail_vector[0], knots[j][1] + tail_vector[1]
+            positions.add(knots[-1])
 
     return positions
 
 
 def part_one(lines: list[str]) -> int:
-    return len(find_tail_positions(lines, 2))
+    return len(find_tail_positions(lines=lines, num_knots=2))
 
 
 def part_two(lines: list[str]) -> int:
-    return len(find_tail_positions(lines, 10))
+    return len(find_tail_positions(lines=lines, num_knots=10))
 
 
 if __name__ == '__main__':
