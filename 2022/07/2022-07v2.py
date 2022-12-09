@@ -32,8 +32,8 @@ def build_directories(commands: list[str]) -> dict[str, int]:
             case ['dir', _]:
                 continue
             case [size_str, _] if size_str.isdecimal():
-                for i in range(1, len(pwd) + 1):
-                    directory_name = '/'.join(pwd[0:i])
+                for i in range(len(pwd)):
+                    directory_name = '/'.join(pwd[0:i + 1])
                     directories[directory_name] = directories.get(directory_name, 0) + int(size_str)
             case _:
                 raise Exception(f'unexpected command: {command}')
