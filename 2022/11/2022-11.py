@@ -4,6 +4,7 @@ import math
 import operator
 from pathlib import Path
 import sys
+from typing import NamedTuple, Callable
 
 filepath = Path(__file__)
 test_filename = filepath.stem + '.txt'
@@ -15,16 +16,26 @@ part_two_answer = 14561971968
 def parse(input_path: Path) -> list[str]:
     return input_path.read_text().strip().split('\n\n')
 
+
 operator_mapping = {
     '+': operator.add,
     '*': operator.mul,
     '**': operator.pow
 }
 
-def build_monkey(lines: list[str]) -> object:
-    monkey_id: int = -1
+
+class Monkey(NamedTuple):
+    id: str
+    items: list[int]
+    operation: Callable[[int], int]
+    divisor: int
+    get_catch_id: Callable[[int], int]
+
+
+def build_monkey(lines: list[str]) -> Monkey:
+    monkey_id: str = ''
     items: list[int] = []
-    operation: str = ''
+    operation: Callable[[int, int], int]
     operation_param: int = -1
     divisor: int = -1
     true_id: int = -1
@@ -33,7 +44,7 @@ def build_monkey(lines: list[str]) -> object:
     for line in lines:
         match line.strip().split(' '):
             case ['Monkey', value]:
-                monkey_id = int(value.strip(':'))
+                monkey_id = value.strip(':')
             case ['Starting', 'items:', *numbers]:
                 items.extend(map(lambda n: int(n.strip(',')), numbers))
             case ['Operation:', 'new', '=', 'old', op_string, value]:
@@ -50,47 +61,46 @@ def build_monkey(lines: list[str]) -> object:
                 else:
                     false_id = int(value)
 
-    return {
-        'id': monkey_id,
-        'items': items,
-        'operation': operation,
-        'operation_value': operation_param,
-        'divisor': divisor,
-        'true_id': true_id,
-        'false_id': false_id
-    }
+    return Monkey(
+        monkey_id,
+        items,
+        lambda item: operation(item, operation_param),
+        divisor,
+        lambda item: true_id if item % divisor == 0 else false_id
+    )
+
 
 def part_one(lines: list[str]) -> int:
     monkeys = [build_monkey(line.split('\n')) for line in lines]
-    count = [0 for _ in monkeys]
+    count = {}
     for i in range(20):
         for monkey in monkeys:
-            for item in monkey['items']:
-                count[monkey['id']] += 1
-                item = monkey['operation'](item, monkey['operation_value'])
+            for item in monkey.items:
+                count[monkey.id] = count.get(monkey.id, 0) + 1
+                item = monkey.operation(item)
                 item //= 3
-                destination_monkey_id = monkey['true_id'] if item % monkey['divisor'] == 0 else monkey['false_id']
-                monkeys[destination_monkey_id]['items'].append(item)
-            monkey['items'].clear()
-    count.sort()
-    return count[-1] * count[-2]
+                catch_id = monkey.get_catch_id(item)
+                monkeys[catch_id].items.append(item)
+            monkey.items.clear()
+    sorted_count = sorted(count.values())
+    return sorted_count[-1] * sorted_count[-2]
 
 
 def part_two(lines: list[str]) -> int:
     monkeys = [build_monkey(line.split('\n')) for line in lines]
-    common_divisor = math.prod(monkey['divisor'] for monkey in monkeys)
-    count = [0 for _ in monkeys]
+    common_divisor = math.prod(monkey.divisor for monkey in monkeys)
+    count = {}
     for i in range(10000):
         for monkey in monkeys:
-            for item in monkey['items']:
-                count[monkey['id']] += 1
-                item = monkey['operation'](item, monkey['operation_value'])
+            for item in monkey.items:
+                count[monkey.id] = count.get(monkey.id, 0) + 1
+                item = monkey.operation(item)
                 item %= common_divisor
-                destination_monkey_id = monkey['true_id'] if item % monkey['divisor'] == 0 else monkey['false_id']
-                monkeys[destination_monkey_id]['items'].append(item)
-            monkey['items'].clear()
-    count.sort()
-    return count[-1] * count[-2]
+                catch_id = monkey.get_catch_id(item)
+                monkeys[catch_id].items.append(item)
+            monkey.items.clear()
+    sorted_count = sorted(count.values())
+    return sorted_count[-1] * sorted_count[-2]
 
 
 if __name__ == '__main__':
