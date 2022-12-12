@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 from collections import deque
 from pathlib import Path
 import sys
@@ -40,14 +41,14 @@ def bfs(grid: list[list[int]], starting: tuple[int, int], ending: tuple[int, int
 
     while next_coordinates and ending not in steps:
         r, c = next_coordinates.popleft()
+
         for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
             new_r = r + dr
             new_c = c + dc
-            if (new_r, new_c) in steps:
-                continue
-            if not 0 <= new_r < len(grid) or not 0 <= new_c < len(grid[0]):
-                continue
-            if grid[new_r][new_c] - grid[r][c] > 1:
+            if (new_r, new_c) in steps or \
+                    not 0 <= new_r < len(grid) or \
+                    not 0 <= new_c < len(grid[0]) or \
+                    grid[new_r][new_c] - grid[r][c] > 1:
                 continue
             next_coordinates.append((new_r, new_c))
             steps[(new_r, new_c)] = steps[r, c] + 1

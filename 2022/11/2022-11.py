@@ -62,17 +62,18 @@ def build_monkey(lines: list[str]) -> Monkey:
                     false_id = int(value)
 
     return Monkey(
-        monkey_id,
-        items,
-        lambda item: operation(item, operation_param),
-        divisor,
-        lambda item: true_id if item % divisor == 0 else false_id
+        id=monkey_id,
+        items=items,
+        operation=lambda item: operation(item, operation_param),
+        divisor=divisor,
+        get_catch_id=lambda item: true_id if item % divisor == 0 else false_id
     )
 
 
 def part_one(lines: list[str]) -> int:
     monkeys = [build_monkey(line.split('\n')) for line in lines]
     count = {}
+
     for i in range(20):
         for monkey in monkeys:
             for item in monkey.items:
@@ -82,6 +83,7 @@ def part_one(lines: list[str]) -> int:
                 catch_id = monkey.get_catch_id(item)
                 monkeys[catch_id].items.append(item)
             monkey.items.clear()
+
     sorted_count = sorted(count.values())
     return sorted_count[-1] * sorted_count[-2]
 
@@ -90,6 +92,7 @@ def part_two(lines: list[str]) -> int:
     monkeys = [build_monkey(line.split('\n')) for line in lines]
     common_divisor = math.prod(monkey.divisor for monkey in monkeys)
     count = {}
+
     for i in range(10000):
         for monkey in monkeys:
             for item in monkey.items:
@@ -99,6 +102,7 @@ def part_two(lines: list[str]) -> int:
                 catch_id = monkey.get_catch_id(item)
                 monkeys[catch_id].items.append(item)
             monkey.items.clear()
+
     sorted_count = sorted(count.values())
     return sorted_count[-1] * sorted_count[-2]
 
