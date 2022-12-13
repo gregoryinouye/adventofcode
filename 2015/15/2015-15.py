@@ -63,7 +63,7 @@ def sum_calories(ingredients: list[Ingredient], count: list[int]) -> int:
 def get_max_cookie_score(ingredients: list[Ingredient], max_calories: int = None) -> int:
     max_score = -1
 
-    def dfs(ingredients: list[Ingredient], count: list[int], index: int):
+    def dfs(count: list[int], index: int):
         if max_calories is not None and sum_calories(ingredients=ingredients, count=count) > max_calories:
             return
         if sum(count) == 100:
@@ -75,12 +75,12 @@ def get_max_cookie_score(ingredients: list[Ingredient], max_calories: int = None
             return
 
         count[index] += 1
-        dfs(ingredients=ingredients, count=count, index=index)
+        dfs(count=count, index=index)
 
         count[index] -= 1
-        dfs(ingredients=ingredients, count=count, index=index + 1)
+        dfs(count=count, index=index + 1)
 
-    dfs(ingredients=ingredients, count=[0 for _ in range(len(ingredients))], index=0)
+    dfs(count=[0 for _ in range(len(ingredients))], index=0)
     return max_score
 
 
