@@ -20,8 +20,7 @@ def build_scan(lines: list[str]) -> dict[tuple[int, int], int]:
     for line in lines:
         xy_pairs = [tuple(map(int, point.split(','))) for point in line.split(' -> ')]
         for i in range(1, len(xy_pairs)):
-            start = xy_pairs[i - 1]
-            end = xy_pairs[i]
+            start, end = xy_pairs[i - 1], xy_pairs[i]
             draw_line(cave=cave, start=start, end=end)
 
     return cave
@@ -31,15 +30,12 @@ def draw_line(cave: dict[tuple[int, int], int], start: tuple[int, int], end: tup
     (x1, y1), (x2, y2) = start, end
 
     if x1 == x2:
-        assert y1 != y2
-        min_y = min(y1, y2)
-        max_y = max(y1, y2)
+        min_y, max_y = min(y1, y2), max(y1, y2)
         for j in range(min_y, max_y + 1):
             cave[(x1, j)] = 2
+
     if y1 == y2:
-        assert x1 != x2
-        min_x = min(x1, x2)
-        max_x = max(x1, x2)
+        min_x, max_x = min(x1, x2), max(x1, x2)
         for j in range(min_x, max_x + 1):
             cave[(j, y1)] = 2
 
@@ -47,10 +43,9 @@ def draw_line(cave: dict[tuple[int, int], int], start: tuple[int, int], end: tup
 def drop_sand(cave: dict[tuple[int, int], int], origin: tuple[int, int], max_height: int, has_floor: bool) -> tuple[int, int]:
     landing = get_landing(cave=cave, origin=origin, max_height=max_height, has_floor=has_floor)
 
-    if landing[1] < 0:
-        return landing
+    if landing[1] >= 0:
+        cave[landing] = 1
 
-    cave[landing] = 1
     return landing
 
 
