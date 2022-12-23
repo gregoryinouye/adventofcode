@@ -15,8 +15,8 @@ def parse(input_path: Path) -> list[str]:
     return input_path.read_text().strip().split('\n')
 
 
-def parse_grid(lines: list[str]) -> dict[tuple[int, int], int]:
-    return {(r, c): 1 for r, line in enumerate(lines) for c, cell in enumerate(line) if cell == '#'}
+def parse_grid(lines: list[str]) -> set[tuple[int, int]]:
+    return {(r, c) for r, line in enumerate(lines) for c, cell in enumerate(line) if cell == '#'}
 
 
 directions = [
@@ -27,22 +27,22 @@ directions = [
 ]
 
 
-def has_neighbor(grid: dict[tuple[int, int], int], position: tuple[int, int]) -> bool:
+def has_neighbor(grid: set[tuple[int, int]], position: tuple[int, int]) -> bool:
     for dr, dc in [(1, 0), (0, 1), (-1, 0), (0, -1), (-1, -1), (1, -1), (-1, 1), (1, 1)]:
         r, c = position
-        if grid.get((r + dr, c + dc), 0) == 1:
+        if (r + dr, c + dc) in grid:
             return True
     return False
 
 
-def propose_move(grid: dict[tuple[int, int], int], position: tuple[int, int], offset: int) -> Optional[tuple[int, int]]:
+def propose_move(grid: set[tuple[int, int]], position: tuple[int, int], offset: int) -> Optional[tuple[int, int]]:
     r, c = position
 
     for i in range(4):
         result = directions[(i + offset) % 4][0]
 
         for dr, dc in directions[(i + offset) % 4]:
-            if grid.get((r + dr, c + dc), 0) == 1:
+            if (r + dr, c + dc) in grid:
                 result = None
                 break
 
@@ -71,7 +71,7 @@ def part_one(lines: list[str]) -> int:
         proposed = {}
         conflicts = set()
 
-        for r, c in list(grid.keys()):
+        for r, c in list(grid):
             if not has_neighbor(grid, (r, c)):
                 continue
             destination = propose_move(grid, (r, c), i % 4)
@@ -85,10 +85,10 @@ def part_one(lines: list[str]) -> int:
         for move in proposed:
             if move in conflicts:
                 continue
-            del grid[proposed[move]]
-            grid[move] = 1
+            grid.remove(proposed[move])
+            grid.add(move)
 
-    return get_min_area(list(grid.keys())) - len(grid.keys())
+    return get_min_area(list(grid)) - len(grid)
 
 
 def part_two(lines: list[str]) -> int:
@@ -100,7 +100,7 @@ def part_two(lines: list[str]) -> int:
         proposed = {}
         conflicts = set()
 
-        for r, c in list(grid.keys()):
+        for r, c in list(grid):
             if not has_neighbor(grid, (r, c)):
                 continue
             destination = propose_move(grid, (r, c), i % 4)
@@ -114,8 +114,8 @@ def part_two(lines: list[str]) -> int:
         for move in proposed:
             if move in conflicts:
                 continue
-            del grid[proposed[move]]
-            grid[move] = 1
+            grid.remove(proposed[move])
+            grid.add(move)
 
         i += 1
         delta = len(proposed)
