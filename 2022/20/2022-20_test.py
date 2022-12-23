@@ -24,7 +24,9 @@ def test_example_input():
     (-5, 5, [(5, -5), (0, 0), (1, 1), (2, 2), (3, 3), (4, 4), (6, 6), (7, 7), (8, 8), (9, 9)]),
 ])
 def test_move_value(number, index, expected):
-    assert solution.move_value([(0, 0), (1, 1), (2, 2), (3, 3), (4, 4), (5, number), (6, 6), (7, 7), (8, 8), (9, 9)], index) == expected
+    moves = [(0, 0), (1, 1), (2, 2), (3, 3), (4, 4), (5, number), (6, 6), (7, 7), (8, 8), (9, 9)]
+    solution.move_value(moves, index)
+    assert moves == expected
 
 
 def test_part_one_with_example_input(test_example_input):

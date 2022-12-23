@@ -14,38 +14,38 @@ def parse(input_path: Path) -> list[str]:
     return input_path.read_text().strip().split('\n')
 
 
-def move_value(moves: list[tuple[int, int]], move_order: int) -> list[tuple[int, int]]:
+def move_value(moves: list[tuple[int, int]], move_order: int) -> None:
     length = len(moves)
-    index = next(j for j in range(length) if moves[j][0] == move_order)
+    index = next(i for i in range(length) if moves[i][0] == move_order)
     move = moves[index][1]
     new_index = (index + move) % (length - 1)
     moves.insert(new_index, moves.pop(index))
-    return moves
+
+
+def sum_grove_coordinates(moves: list[tuple[int, int]]) -> int:
+    length = len(moves)
+    index = next(i for i in range(length) if moves[i][1] == 0)
+    coordinates = [moves[(index + i) % length] for i in [1000, 2000, 3000]]
+    return sum(map(lambda coordinate: coordinate[1], coordinates))
 
 
 def part_one(lines: list[str]) -> int:
     moves = [(i, int(line)) for i, line in enumerate(lines)]
-    length = len(moves)
 
     for i in range(len(moves)):
-        moves = move_value(moves, i)
+        move_value(moves, i)
 
-    index = next(i for i in range(length) if moves[i][1] == 0)
-    coordinates = [moves[(index + i) % length] for i in [1000, 2000, 3000]]
-    return sum(map(lambda v: v[1], coordinates))
+    return sum_grove_coordinates(moves)
 
 
 def part_two(lines: list[str]) -> int:
     moves = [(i, int(line) * 811589153) for i, line in enumerate(lines)]
-    length = len(moves)
 
     for _ in range(10):
         for i in range(len(moves)):
-            moves = move_value(moves, i)
+            move_value(moves, i)
 
-    index = next(i for i in range(length) if moves[i][1] == 0)
-    coordinates = [moves[(index + i) % length] for i in [1000, 2000, 3000]]
-    return sum(map(lambda v: v[1], coordinates))
+    return sum_grove_coordinates(moves)
 
 
 if __name__ == '__main__':
