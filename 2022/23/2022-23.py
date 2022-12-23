@@ -52,6 +52,30 @@ def propose_move(grid: set[tuple[int, int]], position: tuple[int, int], offset: 
     return None
 
 
+def update_grid(grid: set[tuple[int, int]], offset: int) -> bool:
+    proposed = {}
+    conflicts = set()
+
+    for r, c in list(grid):
+        if not has_neighbor(grid, (r, c)):
+            continue
+        destination = propose_move(grid, (r, c), offset % 4)
+        if destination is None:
+            continue
+        if destination not in proposed:
+            proposed[destination] = (r, c)
+        else:
+            conflicts.add(destination)
+
+    for move in proposed:
+        if move in conflicts:
+            continue
+        grid.remove(proposed[move])
+        grid.add(move)
+
+    return len(proposed) > 0
+
+
 def get_min_area(coordinates: list[tuple[int, int]]) -> int:
     min_x, max_x = float('inf'), -float('inf')
     min_y, max_y = float('inf'), -float('inf')
@@ -61,6 +85,7 @@ def get_min_area(coordinates: list[tuple[int, int]]) -> int:
         max_x = max(x, max_x)
         min_y = min(y, min_y)
         max_y = max(y, max_y)
+
     return (max_x - min_x + 1) * (max_y - min_y + 1)
 
 
@@ -68,57 +93,19 @@ def part_one(lines: list[str]) -> int:
     grid = parse_grid(lines)
 
     for i in range(10):
-        proposed = {}
-        conflicts = set()
-
-        for r, c in list(grid):
-            if not has_neighbor(grid, (r, c)):
-                continue
-            destination = propose_move(grid, (r, c), i % 4)
-            if destination is None:
-                continue
-            if destination not in proposed:
-                proposed[destination] = (r, c)
-            else:
-                conflicts.add(destination)
-
-        for move in proposed:
-            if move in conflicts:
-                continue
-            grid.remove(proposed[move])
-            grid.add(move)
+        update_grid(grid, i)
 
     return get_min_area(list(grid)) - len(grid)
 
 
 def part_two(lines: list[str]) -> int:
     grid = parse_grid(lines)
-    delta = 1
+    delta = True
     i = 0
 
-    while delta > 0:
-        proposed = {}
-        conflicts = set()
-
-        for r, c in list(grid):
-            if not has_neighbor(grid, (r, c)):
-                continue
-            destination = propose_move(grid, (r, c), i % 4)
-            if destination is None:
-                continue
-            if destination not in proposed:
-                proposed[destination] = (r, c)
-            else:
-                conflicts.add(destination)
-
-        for move in proposed:
-            if move in conflicts:
-                continue
-            grid.remove(proposed[move])
-            grid.add(move)
-
+    while delta:
+        delta = update_grid(grid, i)
         i += 1
-        delta = len(proposed)
 
     return i
 
