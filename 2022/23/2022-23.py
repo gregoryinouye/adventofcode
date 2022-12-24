@@ -54,7 +54,7 @@ def update_grid(grid: set[tuple[int, int]], offset: int) -> bool:
     for r, c in list(grid):
         if not has_neighbor(grid, (r, c)):
             continue
-        destination = propose_move(grid, (r, c), offset % 4)
+        destination = propose_move(grid, (r, c), offset)
         if destination is None:
             continue
         if destination in proposed:
