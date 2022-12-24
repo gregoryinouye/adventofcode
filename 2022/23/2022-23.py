@@ -39,15 +39,10 @@ def propose_move(grid: set[tuple[int, int]], position: tuple[int, int], offset: 
     r, c = position
 
     for i in range(4):
-        result = directions[(i + offset) % 4][0]
+        direction_check = directions[(i + offset) % 4]
 
-        for dr, dc in directions[(i + offset) % 4]:
-            if (r + dr, c + dc) in grid:
-                result = None
-                break
-
-        if result:
-            return result[0] + r, result[1] + c
+        if all(map(lambda delta: (r + delta[0], c + delta[1]) not in grid, direction_check)):
+            return r + direction_check[0][0], c + direction_check[0][1]
 
     return None
 
