@@ -62,16 +62,13 @@ def update_grid(grid: set[tuple[int, int]], offset: int) -> bool:
         destination = propose_move(grid, (r, c), offset % 4)
         if destination is None:
             continue
-        if destination not in proposed:
-            proposed[destination] = (r, c)
-        else:
+        if destination in proposed:
             conflicts.add(destination)
+        proposed[destination] = (r, c)
 
-    for move in proposed:
-        if move in conflicts:
-            continue
-        grid.remove(proposed[move])
-        grid.add(move)
+    valid_moves = {key: value for key, value in proposed.items() if key not in conflicts}
+    grid.difference_update(valid_moves.values())
+    grid.update(valid_moves.keys())
 
     return len(proposed) > 0
 
