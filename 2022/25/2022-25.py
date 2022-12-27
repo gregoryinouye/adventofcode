@@ -13,44 +13,27 @@ def parse(input_path: Path) -> list[str]:
     return input_path.read_text().strip().split('\n')
 
 
+decode_base_five = {'=': -2, '-': -1, '0': 0, '1': 1, '2': 2}
+encode_base_five_remainder = {0: '0', 1: '1', 2: '2', 3: '=', 4: '-'}
+
+
 def to_base_ten(base_five: str) -> int:
-    numbers = []
-    for i in range(len(base_five)):
-        current = base_five[i]
-        base = pow(5, len(base_five) - i - 1)
-        if current.isdecimal():
-            numbers.append(int(current) * base)
-        elif current == '-':
-            numbers.append(-1 * base)
-        elif current == '=':
-            numbers.append(-2 * base)
-    return sum(numbers)
+    return sum(decode_base_five[char] * 5 ** (len(base_five) - i - 1) for i, char in enumerate(base_five))
+
 
 def to_base_five(base_ten: int) -> str:
-    number = []
-    build = []
-    current = base_ten
+    base_five_number = []
 
-    while current != 0:
-        number.append(current % 5)
-        current //= 5
+    while base_ten:
+        base_five_number += encode_base_five_remainder[base_ten % 5]
+        base_ten = (base_ten + 2) // 5
 
-    carry = 0
-    for n in number:
-        current = n + carry
-        if current > 2:
-            carry = 1
-            build.append(current - 5)
-        else:
-            build.append(current)
-            carry = 0
-
-    return ''.join(str(n) if n >= 0 else '-' if n == -1 else '=' for n in reversed(build))
+    return ''.join(base_five_number[::-1])
 
 
 def part_one(lines: list[str]) -> str:
-    numbers = [to_base_ten(line) for line in lines]
-    return to_base_five(sum(numbers))
+    total_sum = sum(to_base_ten(line) for line in lines)
+    return to_base_five(total_sum)
 
 
 if __name__ == '__main__':
