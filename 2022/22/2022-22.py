@@ -17,10 +17,26 @@ def parse(input_path: Path) -> list[str]:
 
 directions = ((0, 1), (1, 0), (0, -1), (-1, 0))
 convert_char = {'.': 0, '#': 1, ' ': -1}
+cube_functions = {
+    (0, 0): lambda r, c: (149 - r, 99, 2),
+    (1, 0): lambda r, c: (49, r + 50, 3),
+    (2, 0): lambda r, c: (149 - r, 149, 2),
+    (3, 0): lambda r, c: (149, r - 100, 3),
+    (0, 1): lambda r, c: (0, c + 100, 1),
+    (1, 1): lambda r, c: (100 + c, 49, 2),
+    (2, 1): lambda r, c: (c - 50, 99, 2),
+    (0, 2): lambda r, c: (149 - r, 0, 0),
+    (1, 2): lambda r, c: (100, r - 50, 1),
+    (2, 2): lambda r, c: (149 - r, 50, 0),
+    (3, 2): lambda r, c: (0, r - 100, 1),
+    (0, 3): lambda r, c: (50 + c, 50, 0),
+    (1, 3): lambda r, c: (c + 100, 0, 0),
+    (2, 3): lambda r, c: (199, c - 100, 3),
+}
 
 
-def parse_path(line: str) -> list[tuple[int, int]]:
-    path = []
+def parse_instructions(line: str) -> list[tuple[int, int]]:
+    instructions = []
     rotation = 0
     magnitude = ''
 
@@ -28,16 +44,21 @@ def parse_path(line: str) -> list[tuple[int, int]]:
         if char.isdecimal():
             magnitude += char
         else:
-            path.append((rotation, int(magnitude)))
+            instructions.append((rotation, int(magnitude)))
             rotation = 1 if char == 'R' else -1
             magnitude = ''
 
-    path.append((rotation, int(magnitude)))
-    return path
+    instructions.append((rotation, int(magnitude)))
+    return instructions
 
 
 def parse_map(lines: list[str]) -> dict[tuple[int, int], int]:
     return {(r, c): convert_char[char] for r, line in enumerate(lines) for c, char in enumerate(line)}
+
+
+def get_edge(position: tuple[int, int, int], edge_length: int) -> int:
+    r, c, facing = position
+    return r // edge_length if facing % 2 == 0 else c // edge_length
 
 
 def get_wrap_point(grid: dict[tuple[int, int], int], position: tuple[int, int, int]) -> tuple[int, int, int]:
@@ -53,71 +74,11 @@ def get_wrap_point(grid: dict[tuple[int, int], int], position: tuple[int, int, i
 
 def get_cube_point(grid: dict[tuple[int, int], int], position: tuple[int, int, int]) -> tuple[int, int, int]:
     r, c, facing = position
-    new_r, new_c, new_facing = -1, -1, -1
-
-    if facing == 0:
-        if c == 149: # E1
-            new_r = 149 - r
-            new_c = 99
-            new_facing = 2
-        elif c == 99 and 50 <= r < 100: # A
-            new_r = 49
-            new_c = r + 50
-            new_facing = 3
-        elif c == 99 and 100 <= r < 150: # E2
-            new_r = 149 - r
-            new_c = 149
-            new_facing = 2
-        elif c == 49 and 150 <= r < 200: # C
-            new_r = 149
-            new_c = r - 100
-            new_facing = 3
-    if facing == 1:
-        if r == 49 and 100 <= c < 150: # A
-            new_r = c - 50
-            new_c = 99
-            new_facing = 2
-        elif r == 149 and 50 <= c < 100: # C
-            new_r = c + 100
-            new_c = 49
-            new_facing = 2
-        elif r == 199: # F
-            new_r = 0
-            new_c = c + 100
-            new_facing = 1
-    if facing == 2:
-        if c == 50 and 0 <= r < 50: # G1
-            new_r = 149 - r
-            new_c = 0
-            new_facing = 0
-        elif c == 50 and 50 <= r < 100: # B
-            new_r = 100
-            new_c = r - 50
-            new_facing = 1
-        elif c == 0 and 100 <= r < 150: # G2
-            new_r = 149 - r
-            new_c = 50
-            new_facing = 0
-        elif c == 0 and 150 <= r < 200: # D
-            new_r = 0
-            new_c = r - 100
-            new_facing = 1
-    if facing == 3:
-        if r == 100 and 0 <= c < 50: # B
-            new_r = c + 50
-            new_c = 50
-            new_facing = 0
-        elif r == 0 and 50 <= c < 100: # D
-            new_r = c + 100
-            new_c = 0
-            new_facing = 0
-        elif r == 0 and 100 <= c < 150: # F
-            new_r = 199
-            new_c = c - 100
-            new_facing = 3
+    edge = get_edge(position=position, edge_length=50)
+    new_r, new_c, new_facing = cube_functions[edge, facing](r, c)
 
     if grid[new_r, new_c] == 1:
-        return r, c, facing
+        return position
 
     return new_r, new_c, new_facing
 
@@ -153,11 +114,11 @@ def get_final_password(row: int, col: int, facing: int) -> int:
 
 def part_one(lines: list[str]) -> int:
     grid = parse_map(lines[0].split('\n'))
-    paths = parse_path(lines[1])
+    instructions = parse_instructions(lines[1])
     r, facing = 0, 0
     _, c = next((r, c) for r, c in grid.keys() if r == 0 and grid[r, c] == 0)
 
-    for path in paths:
+    for path in instructions:
         r, c, facing = apply_instruction(grid=grid, path=path, position=(r, c, facing), wrap=get_wrap_point)
 
     return get_final_password(r + 1, c + 1, facing)
@@ -165,11 +126,11 @@ def part_one(lines: list[str]) -> int:
 
 def part_two(lines: list[str]) -> int:
     grid = parse_map(lines[0].split('\n'))
-    paths = parse_path(lines[1])
+    instructions = parse_instructions(lines[1])
     r, facing = 0, 0
     _, c = next((r, c) for r, c in grid.keys() if r == 0 and grid[r, c] == 0)
 
-    for path in paths:
+    for path in instructions:
         r, c, facing = apply_instruction(grid=grid, path=path, position=(r, c, facing), wrap=get_cube_point)
 
     return get_final_password(r + 1, c + 1, facing)
