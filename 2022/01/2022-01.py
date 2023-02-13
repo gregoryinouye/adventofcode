@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-import sys
 from pathlib import Path
+import sys
 
 filepath = Path(__file__)
 test_filename = filepath.stem + '.txt'
